@@ -13,4 +13,5 @@ add_executable(dense_hash_tables
         densehashtable/densehashtable.h
         main.c
         densehashtable/densehashtable_entry.c
+        densehashtable/densehashtable_table.c
 )

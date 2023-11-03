@@ -1,5 +1,4 @@
 #include "densehashtable.h"
-#include "noahdmncio.h"
 
 #define LEFT_SHIFT_BITS 5
 
@@ -20,7 +19,7 @@ static int *calculate_hash(const char *key) {
     return hash;
 }
 
-DenseHashTableEntry *dht_entry_init(const char *key, const int value) {
+DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int value) {
     if (key == NULL) {
         return NULL;
     }
@@ -31,52 +30,73 @@ DenseHashTableEntry *dht_entry_init(const char *key, const int value) {
         return NULL;
     }
 
-    int *hash_ptr = calculate_hash(key);
-    if (hash_ptr == NULL) {
+    int *hash = calculate_hash(key);
+    if (hash == NULL) {
         free(entry_ptr);
         return NULL;
     }
 
     entry_ptr->key = (char *) malloc(strlen(key) + 1);
     if (entry_ptr->key == NULL) {
-        free(hash_ptr);
+        free(hash);
         free(entry_ptr);
         return NULL;
     }
 
     strcpy(entry_ptr->key, key);
-    entry_ptr->hash = *hash_ptr;
+    entry_ptr->hash = *hash;
     entry_ptr->value = value;
 
     return entry_ptr;
 }
 
-int dht_entry_destroy(DenseHashTableEntry *entry_ptr) {
-    if (entry_ptr == NULL) {
+int dense_hash_table_entry_destroy(DenseHashTableEntry *entry) {
+    if (entry == NULL) {
         return NULLPTR_ERROR;
     }
 
-    if (entry_ptr->key != NULL) {
-        free(entry_ptr->key);
-        entry_ptr->key = NULL;
+    if (entry->key != NULL) {
+        free(entry->key);
+        entry->key = NULL;
     }
 
-    free(entry_ptr);
-    entry_ptr = NULL;
+    free(entry);
+    entry = NULL;
 
     return ALL_OK;
 }
 
-int dht_entry_print(DenseHashTableEntry *entry_ptr) {
-    if (entry_ptr == NULL) {
+int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char *key, int value) {
+    if (entry == NULL || key == NULL) {
+        return NULLPTR_ERROR;
+    }
+
+    int *hash = calculate_hash(key);
+    if (hash == NULL) {
+        return NULLPTR_ERROR;
+    }
+
+    entry->key = (char *) malloc(strlen(key) + 1);
+    if (entry->key == NULL) {
+        return NULLPTR_ERROR;
+    }
+    strcpy(entry->key, key);
+
+    entry->hash = *hash;
+    entry->value = value;
+
+    return ALL_OK;
+}
+
+int dense_hash_table_entry_print(const DenseHashTableEntry *entry) {
+    if (entry == NULL) {
         return NULLPTR_ERROR;
     }
 
     println("{key: %s; value: %i; hash: %i}",
-            entry_ptr->key,
-            entry_ptr->value,
-            entry_ptr->hash
-            );
+            entry->key,
+            entry->value,
+            entry->hash);
 
     return ALL_OK;
 }
