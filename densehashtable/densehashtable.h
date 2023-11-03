@@ -2,7 +2,7 @@
 #define DENSEHASHTABLE_H
 
 #define ALL_OK 0
-#define NULLPTR_ERROR -1
+#define NULLPTR_ERROR (-1)
 
 #include <assert.h>
 #include <stddef.h>
