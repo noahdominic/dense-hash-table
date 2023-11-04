@@ -8,7 +8,7 @@ static int s_dense_hash_table_grow(DenseHashTable *dht)
         return ALLOC_ERROR;
     }
     dht->indices = new_indices;
-    dht->capacity *= 2;
+    dht->capacity *= DHT_DEFAULT_GROWTH_CONST;
     return ALL_OK;
 }
 

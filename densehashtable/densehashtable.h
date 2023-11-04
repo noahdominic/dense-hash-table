@@ -6,6 +6,7 @@
 #define ALLOC_ERROR (-2)
 
 #define DHT_INIT_CAPACITY 4
+#define DHT_DEFAULT_GROWTH_CONST 2
 
 #include "noahdmncio.h"
 
