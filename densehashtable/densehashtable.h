@@ -14,13 +14,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct DenseHashTableEntry {
+typedef struct DenseHashTableEntry
+{
     char *key;
     int value;
     int hash;
 } DenseHashTableEntry;
 
-typedef struct DenseHashTable {
+typedef struct DenseHashTable
+{
     unsigned int size;
     unsigned int capacity;
     unsigned int **indices;

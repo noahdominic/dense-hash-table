@@ -4,7 +4,8 @@
 int *dense_hash_table_lookup(DenseHashTable *dht, const char *key);
 int *dense_hash_table_remove(DenseHashTable *dht, const char *key);
 */
-DenseHashTable *dense_hash_table_init() {
+DenseHashTable *dense_hash_table_init()
+{
     DenseHashTable *dht = (DenseHashTable *) malloc(sizeof(DenseHashTable));
 
     dht->capacity = DHT_INIT_CAPACITY;
@@ -29,7 +30,8 @@ DenseHashTable *dense_hash_table_init() {
     return dht;
 }
 
-int dense_hash_table_destroy(DenseHashTable *dht) {
+int dense_hash_table_destroy(DenseHashTable *dht)
+{
     if (dht == NULL) {
         return NULLPTR_ERROR;
     }
@@ -56,7 +58,8 @@ int dense_hash_table_destroy(DenseHashTable *dht) {
     return ALL_OK;
 }
 
-int dense_hash_table_print(const DenseHashTable *dht) {
+int dense_hash_table_print(const DenseHashTable *dht)
+{
     if (dht == NULL) {
         println("Error in `dense_dht__print`: `dht` is NULL");
         return NULLPTR_ERROR;
@@ -92,7 +95,8 @@ int dense_hash_table_print(const DenseHashTable *dht) {
     return ALL_OK;
 }
 
-int dense_hash_table_insert(DenseHashTable *dht, const int value, const char *key) {
+int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int value)
+{
     if (dht == NULL || key == NULL) {
         return NULLPTR_ERROR;
     }
