@@ -5,75 +5,29 @@ int main() {
     const char *name = "Kyle";
     println("Hello, %s", name);
 
-    //    DenseHashTableEntry *dhte = dense_hash_table_entry_init(name, 69);
-    //    int error = dense_hash_table_entry_print(dhte);
-    //    error += dense_hash_table_entry_destroy(dhte);
+    error = 0;
 
-    struct DenseHashTable *dht = dense_hash_table_init();
-    int error;
-    println("-------");
-    error = dense_hash_table_insert(dht, "KL", 69);
-    error += dense_hash_table_print(dht);
+    const char* names[] = {
+            "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Henry",
+            "Ivy", "Jack", "Kate", "Liam", "Mia", "Noah", "Olivia", "Peter",
+            "Quinn", "Riley", "Sam", "Tyler", "Uma", "Violet", "Will", "Xander",
+            "Yara", "Zane", "Ava", "Ben", "Chloe", "Daniel", "Emily"
+    };
 
-    println("-------");
-    error += dense_hash_table_insert(dht, "Maria", 33);
-    error += dense_hash_table_print(dht);
+    int values[] = {
+            42, 57, 33, 78, 23, 56, 89, 64,
+            38, 51, 77, 45, 60, 30, 94, 68,
+            72, 55, 41, 79, 62, 87, 50, 63,
+            96, 75, 80, 53, 36, 67, 98
+    };
 
-    println("-------");
-    error += dense_hash_table_insert(dht, "Lukas", 26);
-    error += dense_hash_table_print(dht);
+    for (i = 0; i < 31; i++) {
+        println("-------");
+        error += dense_hash_table_insert(dht, names[i % 32], values[i % 32]);
+        error += dense_hash_table_print(dht);
+    }
 
-    println("-------");
-    error += dense_hash_table_insert(dht, "Abdul", 06);
-    error += dense_hash_table_print(dht);
 
-    println("-------");
-    error += dense_hash_table_insert(dht, "Christopher", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Guy", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Kian", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Matthew", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Mark", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Luke", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "John", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Adam", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Seth", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Enoch", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Malachi", 36);
-    error += dense_hash_table_print(dht);
-
-    println("-------");
-    error += dense_hash_table_insert(dht, "Noah", 36);
-    error += dense_hash_table_print(dht);
     error += dense_hash_table_destroy(dht);
 
     return error;
