@@ -18,22 +18,17 @@ int *dense_hash_table_remove(struct DenseHashTable *dht, const char *key);
 */
 struct DenseHashTable *dense_hash_table_init()
 {
-    struct DenseHashTable *dht = (struct DenseHashTable *) malloc(sizeof(struct DenseHashTable));
+    struct DenseHashTable *dht;
+    dht = (struct DenseHashTable *) malloc(sizeof(struct DenseHashTable));
+    if (dht == NULL) {
+        return NULL;
+    }
 
     dht->capacity = DHT_INIT_CAPACITY;
     dht->size = 0;
 
-    dht->entries = (struct DenseHashTableEntry *) malloc(dht->size * sizeof(struct DenseHashTableEntry));
-    if (dht->entries == NULL) {
-        free(dht);
-        dht = NULL;
-        return NULL;
-    }
-
     dht->indices = (unsigned int **) calloc(dht->capacity, sizeof(unsigned int *));
     if (dht->indices == NULL) {
-        free(dht->entries);
-        dht->entries = NULL;
         free(dht);
         dht = NULL;
         return NULL;
