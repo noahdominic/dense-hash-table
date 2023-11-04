@@ -1,17 +1,18 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.0)
+
 project(dense_hash_tables C)
 
 set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 include_directories(noahdmncio
         densehashtable
 )
 
-add_executable(dense_hash_tables
-        noahdmncio/noahdmncio.c
-        noahdmncio/noahdmncio.h
-        densehashtable/densehashtable.h
-        main.c
-        densehashtable/densehashtable_entry.c
-        densehashtable/densehashtable_table.c
-)
+add_subdirectory(noahdmncio)
+add_subdirectory(densehashtable)
+
+add_executable(out main.c)
+
+target_link_libraries(out noahdmncio densehashtable)
