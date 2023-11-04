@@ -1,5 +1,5 @@
 # Generated from CLion C/C++ Code Style settings
-BasedOnStyle: Chromium
+BasedOnStyle: LLVM
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: None
@@ -18,11 +18,12 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: false
-  AfterClass: false
+  AfterClass: true
   AfterControlStatement: Never
-  AfterEnum: false
-  AfterFunction: false
+  AfterEnum: true
+  AfterFunction: true
   AfterNamespace: false
+  AfterStruct: true
   AfterUnion: false
   BeforeCatch: false
   BeforeElse: false
