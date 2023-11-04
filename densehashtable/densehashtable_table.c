@@ -1,6 +1,6 @@
 #include "densehashtable.h"
 
-static int s_dense_hash_table_grow(DenseHashTable *dht)
+static int s_dense_hash_table_grow(struct DenseHashTable *dht)
 {
     unsigned int **new_indices;
     new_indices = (unsigned int **) realloc(dht->indices, 2 * dht->capacity * sizeof(unsigned int *));
@@ -13,17 +13,17 @@ static int s_dense_hash_table_grow(DenseHashTable *dht)
 }
 
 /*
-int *dense_hash_table_lookup(DenseHashTable *dht, const char *key);
-int *dense_hash_table_remove(DenseHashTable *dht, const char *key);
+int *dense_hash_table_lookup(struct DenseHashTable *dht, const char *key);
+int *dense_hash_table_remove(struct DenseHashTable *dht, const char *key);
 */
-DenseHashTable *dense_hash_table_init()
+struct DenseHashTable *dense_hash_table_init()
 {
-    DenseHashTable *dht = (DenseHashTable *) malloc(sizeof(DenseHashTable));
+    struct DenseHashTable *dht = (struct DenseHashTable *) malloc(sizeof(struct DenseHashTable));
 
     dht->capacity = DHT_INIT_CAPACITY;
     dht->size = 0;
 
-    dht->entries = (DenseHashTableEntry *) malloc(dht->size * sizeof(DenseHashTableEntry));
+    dht->entries = (struct DenseHashTableEntry *) malloc(dht->size * sizeof(struct DenseHashTableEntry));
     if (dht->entries == NULL) {
         free(dht);
         dht = NULL;
@@ -42,7 +42,7 @@ DenseHashTable *dense_hash_table_init()
     return dht;
 }
 
-int dense_hash_table_destroy(DenseHashTable *dht)
+int dense_hash_table_destroy(struct DenseHashTable *dht)
 {
     if (dht == NULL) {
         return NULLPTR_ERROR;
@@ -70,7 +70,7 @@ int dense_hash_table_destroy(DenseHashTable *dht)
     return ALL_OK;
 }
 
-int dense_hash_table_print(const DenseHashTable *dht)
+int dense_hash_table_print(const struct DenseHashTable *dht)
 {
     if (dht == NULL) {
         println("Error in `dense_dht__print`: `dht` is NULL");
@@ -109,7 +109,7 @@ int dense_hash_table_print(const DenseHashTable *dht)
     return ALL_OK;
 }
 
-int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int value)
+int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, const int value)
 {
     if (dht == NULL || key == NULL) {
         return NULLPTR_ERROR;
@@ -121,7 +121,7 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
     /*
      * Create a new temporary dht entry...
      */
-    DenseHashTableEntry candidate_dht_entry;
+    struct DenseHashTableEntry candidate_dht_entry;
     int candidate_dht_entry_init_status = dense_hash_table_entry_set(&candidate_dht_entry, key, value);
     if (candidate_dht_entry_init_status != ALL_OK) {
         return candidate_dht_entry_init_status;
@@ -143,8 +143,8 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
             candidate_idx = candidate_dht_entry.hash % mask;
         }
     }
-    DenseHashTableEntry *new_entries;
-    new_entries = (DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(DenseHashTableEntry));
+    struct DenseHashTableEntry *new_entries;
+    new_entries = (struct DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry));
     if (new_entries == NULL) {
         return ALLOC_ERROR;
     }

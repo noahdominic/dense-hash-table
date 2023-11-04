@@ -19,13 +19,13 @@ static int *calculate_hash(const char *key) {
     return hash;
 }
 
-DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int value) {
+struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int value) {
     if (key == NULL) {
         return NULL;
     }
 
-    DenseHashTableEntry *entry_ptr =
-            (DenseHashTableEntry *) malloc(sizeof(DenseHashTableEntry));
+    struct DenseHashTableEntry *entry_ptr =
+            (struct DenseHashTableEntry *) malloc(sizeof(struct DenseHashTableEntry));
     if (entry_ptr == NULL) {
         return NULL;
     }
@@ -50,7 +50,7 @@ DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int valu
     return entry_ptr;
 }
 
-int dense_hash_table_entry_destroy(DenseHashTableEntry *entry) {
+int dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry) {
     if (entry == NULL) {
         return NULLPTR_ERROR;
     }
@@ -66,7 +66,7 @@ int dense_hash_table_entry_destroy(DenseHashTableEntry *entry) {
     return ALL_OK;
 }
 
-int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char *key, int value) {
+int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value) {
     if (entry == NULL || key == NULL) {
         return NULLPTR_ERROR;
     }
@@ -88,7 +88,7 @@ int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char *key, int 
     return ALL_OK;
 }
 
-int dense_hash_table_entry_print(const DenseHashTableEntry *entry) {
+int dense_hash_table_entry_print(const struct DenseHashTableEntry *entry) {
     if (entry == NULL) {
         return NULLPTR_ERROR;
     }

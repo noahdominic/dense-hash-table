@@ -15,31 +15,31 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct DenseHashTableEntry
+struct DenseHashTableEntry
 {
     char *key;
     int value;
     int hash;
-} DenseHashTableEntry;
+};
 
-typedef struct DenseHashTable
+struct DenseHashTable
 {
     unsigned int size;
     unsigned int capacity;
     unsigned int **indices;
-    DenseHashTableEntry *entries;
-} DenseHashTable;
+    struct DenseHashTableEntry *entries;
+};
 
-DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value);
-int dense_hash_table_entry_destroy(DenseHashTableEntry *entry);
-int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char *key, int value);
-int dense_hash_table_entry_print(const DenseHashTableEntry *entry);
+struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value);
+int dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry);
+int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value);
+int dense_hash_table_entry_print(const struct DenseHashTableEntry *entry);
 
-DenseHashTable *dense_hash_table_init();
-int dense_hash_table_destroy(DenseHashTable *dht);
-int dense_hash_table_print(const DenseHashTable *dht);
-int *dense_hash_table_lookup(DenseHashTable *dht, const char *key);
-int dense_hash_table_insert(DenseHashTable *dht, const char *key, int value);
-int *dense_hash_table_remove(DenseHashTable *dht, const char *key);
+struct DenseHashTable *dense_hash_table_init();
+int dense_hash_table_destroy(struct DenseHashTable *dht);
+int dense_hash_table_print(const struct DenseHashTable *dht);
+int *dense_hash_table_lookup(struct DenseHashTable *dht, const char *key);
+int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, int value);
+int *dense_hash_table_remove(struct DenseHashTable *dht, const char *key);
 
 #endif

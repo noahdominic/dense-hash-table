@@ -9,7 +9,7 @@ int main() {
     //    int error = dense_hash_table_entry_print(dhte);
     //    error += dense_hash_table_entry_destroy(dhte);
 
-    DenseHashTable *dht = dense_hash_table_init();
+    struct DenseHashTable *dht = dense_hash_table_init();
     int error;
     println("-------");
     error = dense_hash_table_insert(dht, "KL", 69);
