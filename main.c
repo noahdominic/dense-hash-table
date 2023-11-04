@@ -5,6 +5,8 @@ int main() {
     const char *name = "Kyle";
     println("Hello, %s", name);
 
+    struct DenseHashTable *dht = dense_hash_table_init();
+    int error, i;
     error = 0;
 
     const char* names[] = {
