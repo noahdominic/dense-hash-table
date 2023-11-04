@@ -39,29 +39,28 @@ struct DenseHashTable *dense_hash_table_init()
 
 int dense_hash_table_destroy(struct DenseHashTable *dht)
 {
-    if (dht == NULL) {
-        return NULLPTR_ERROR;
-    }
-
-    if (dht->entries != NULL) {
-        free(dht->entries);
-        dht->entries = NULL;
-    }
-
-    if (dht->indices != NULL) {
-        unsigned int i;
-        for (i = 0; i < dht->capacity; i++) {
-            if (dht->indices[i] != NULL) {
-                free(dht->indices[i]);
-                dht->indices[i] = NULL;
-            }
+    if (dht != NULL) {
+        if (dht->entries != NULL) {
+            free(dht->entries);
+            dht->entries = NULL;
         }
-        free(dht->indices);
-        dht->indices = NULL;
+
+        if (dht->indices != NULL) {
+            unsigned int i;
+            for (i = 0; i < dht->capacity; i++) {
+                if (dht->indices[i] != NULL) {
+                    free(dht->indices[i]);
+                    dht->indices[i] = NULL;
+                }
+            }
+            free(dht->indices);
+            dht->indices = NULL;
+        }
+
+        free(dht);
+        dht = NULL;
     }
 
-    free(dht);
-    dht = NULL;
     return ALL_OK;
 }
 
