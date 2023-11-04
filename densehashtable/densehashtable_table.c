@@ -1,18 +1,17 @@
 #include "densehashtable.h"
 
-static int s_dense_hash_table_grow(DenseHashTable *dht){\
+static int s_dense_hash_table_grow(DenseHashTable *dht)
+{
     println("CALLED");
     unsigned int **new_indices;
-    if (dht->size + 1 > dht->capacity) {
-        new_indices = (unsigned int **) realloc(dht->indices, 2 * dht->capacity * sizeof(unsigned int *));
+    new_indices = (unsigned int **) realloc(dht->indices, 2 * dht->capacity * sizeof(unsigned int *));
 
-        if (new_indices == NULL) {
-            return ALLOC_ERROR;
-        }
-
-        dht->indices = new_indices;
-        dht->capacity *= 2;
+    if (new_indices == NULL) {
+        return ALLOC_ERROR;
     }
+
+    dht->indices = new_indices;
+    dht->capacity *= 2;
     return ALL_OK;
 }
 
@@ -146,7 +145,6 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
             mask = dht->capacity;
             candidate_idx = candidate_dht_entry.hash % mask;
         }
-
     }
     DenseHashTableEntry *new_entries;
     new_entries = (DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(DenseHashTableEntry));
@@ -167,5 +165,3 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
 
     return ALL_OK;
 }
-
-
