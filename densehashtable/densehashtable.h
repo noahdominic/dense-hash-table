@@ -31,14 +31,14 @@ typedef struct DenseHashTable
 
 DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value);
 int dense_hash_table_entry_destroy(DenseHashTableEntry *entry);
-int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char* key, int value);
+int dense_hash_table_entry_set(DenseHashTableEntry *entry, const char *key, int value);
 int dense_hash_table_entry_print(const DenseHashTableEntry *entry);
 
 DenseHashTable *dense_hash_table_init();
 int dense_hash_table_destroy(DenseHashTable *dht);
 int dense_hash_table_print(const DenseHashTable *dht);
 int *dense_hash_table_lookup(DenseHashTable *dht, const char *key);
-int dense_hash_table_insert(DenseHashTable *dht, int value, const char *key);
+int dense_hash_table_insert(DenseHashTable *dht, const char *key, int value);
 int *dense_hash_table_remove(DenseHashTable *dht, const char *key);
 
 #endif

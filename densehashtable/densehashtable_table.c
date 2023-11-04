@@ -1,5 +1,21 @@
 #include "densehashtable.h"
 
+static int s_dense_hash_table_grow(DenseHashTable *dht){\
+    println("CALLED");
+    unsigned int **new_indices;
+    if (dht->size + 1 > dht->capacity) {
+        new_indices = (unsigned int **) realloc(dht->indices, 2 * dht->capacity * sizeof(unsigned int *));
+
+        if (new_indices == NULL) {
+            return ALLOC_ERROR;
+        }
+
+        dht->indices = new_indices;
+        dht->capacity *= 2;
+    }
+    return ALL_OK;
+}
+
 /*
 int *dense_hash_table_lookup(DenseHashTable *dht, const char *key);
 int *dense_hash_table_remove(DenseHashTable *dht, const char *key);
@@ -77,6 +93,8 @@ int dense_hash_table_print(const DenseHashTable *dht)
 
     int i;
 
+    println("Size:%u\tCapacity:%u", dht->size, dht->capacity);
+
     printf("The contents of `indices`: ");
     for (i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] == NULL) {
@@ -101,19 +119,35 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
         return NULLPTR_ERROR;
     }
 
-    unsigned int **new_indices;
+    unsigned int candidate_idx;
+    unsigned int mask = dht->capacity;
 
-    if (dht->size + 1 > dht->capacity) {
-        new_indices = (unsigned int **) realloc(dht->indices, 2 * dht->capacity * sizeof(unsigned int *));
-
-        if (new_indices == NULL) {
-            return ALLOC_ERROR;
-        }
-
-        dht->indices = new_indices;
-        dht->capacity *= 2;
+    /*
+     * Create a new temporary dht entry...
+     */
+    DenseHashTableEntry candidate_dht_entry;
+    int candidate_dht_entry_init_status = dense_hash_table_entry_set(&candidate_dht_entry, key, value);
+    if (candidate_dht_entry_init_status != ALL_OK) {
+        return candidate_dht_entry_init_status;
     }
 
+    /*
+     * Find the index for the dht entry...
+     */
+    candidate_idx = candidate_dht_entry.hash % mask;
+    int i = 0;
+    while (dht->indices[candidate_idx] != NULL && i <= dht->capacity) {
+        println("Uh-oh! Hash conflict either because dht->indices[%u]=%u is not null or because %u is less than the dht->capacity of %u", candidate_idx, dht->indices[candidate_idx], i, dht->capacity);
+        candidate_idx = (candidate_idx + 1) % mask;
+        i++;
+        println("%u", i);
+        if (i >= dht->capacity) {
+            s_dense_hash_table_grow(dht);
+            mask = dht->capacity;
+            candidate_idx = candidate_dht_entry.hash % mask;
+        }
+
+    }
     DenseHashTableEntry *new_entries;
     new_entries = (DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(DenseHashTableEntry));
     if (new_entries == NULL) {
@@ -126,13 +160,12 @@ int dense_hash_table_insert(DenseHashTable *dht, const char *key, const int valu
         return dhte_set_error_code;
     }
 
-    int a = dht->entries[dht->size].hash;
-
-    unsigned int latest_index = a % dht->capacity;
-    dht->indices[latest_index] = (unsigned int*) malloc(sizeof (int));
-    *dht->indices[latest_index] = dht->size;
+    dht->indices[candidate_idx] = (unsigned int *) malloc(sizeof(int));
+    *dht->indices[candidate_idx] = dht->size;
 
     dht->size++;
 
     return ALL_OK;
 }
+
+
