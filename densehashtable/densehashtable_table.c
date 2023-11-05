@@ -24,15 +24,15 @@ struct DenseHashTable *dense_hash_table_init()
         return NULL;
     }
 
-    dht->capacity = DHT_INIT_CAPACITY;
-    dht->size = 0;
-
-    dht->indices = (unsigned int **) calloc(dht->capacity, sizeof(unsigned int *));
+    dht->indices = (unsigned int **) calloc(DHT_INIT_CAPACITY, sizeof(unsigned int *));
     if (dht->indices == NULL) {
         free(dht);
         dht = NULL;
         return NULL;
     }
+
+    dht->capacity = DHT_INIT_CAPACITY;
+    dht->size = 0;
 
     return dht;
 }
