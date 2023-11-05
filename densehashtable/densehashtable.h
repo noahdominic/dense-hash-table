@@ -5,7 +5,7 @@
 #define NULLPTR_ERROR (-1)
 #define ALLOC_ERROR (-2)
 
-#define DHT_INIT_CAPACITY 4
+#define DHT_INIT_CAPACITY 8
 #define DHT_DEFAULT_GROWTH_CONST 2
 
 #include <assert.h>
@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 struct DenseHashTableEntry
 {
