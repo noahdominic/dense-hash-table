@@ -29,9 +29,9 @@ struct DenseHashTable
     struct DenseHashTableEntry *entries;
 };
 
-struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value);
+struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value, int hash);
 int dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry);
-int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value);
+int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value, int hash);
 int dense_hash_table_entry_print(const struct DenseHashTableEntry *entry);
 
 struct DenseHashTable *dense_hash_table_init();

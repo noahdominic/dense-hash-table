@@ -1,5 +1,23 @@
 #include "densehashtable.h"
 
+static int *calculate_hash(const char *key)
+{
+    if (key == NULL) {
+        return NULL;
+    }
+
+    int *hash = (int *) calloc(1, sizeof(int));
+
+    unsigned int len = strlen(key);
+
+    int i;
+    for (i = 0; i < len; i++) {
+        *hash = (*hash << LEFT_SHIFT_BITS) - *hash + key[i];
+    }
+
+    return hash;
+}
+
 static int s_dense_hash_table_grow(struct DenseHashTable *dht)
 {
     unsigned int **new_indices;
