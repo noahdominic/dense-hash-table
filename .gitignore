@@ -2,3 +2,4 @@
 .code/
 cmake-build-debug/
 build/
+.cache/
