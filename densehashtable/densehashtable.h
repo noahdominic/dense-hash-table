@@ -8,10 +8,9 @@
 #define DHT_INIT_CAPACITY 4
 #define DHT_DEFAULT_GROWTH_CONST 2
 
-#include "noahdmncio.h"
-
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

@@ -93,7 +93,7 @@ int dense_hash_table_entry_print(const struct DenseHashTableEntry *entry) {
         return NULLPTR_ERROR;
     }
 
-    println("{key: %s; value: %i; hash: %i}",
+    printf("{key: %s; value: %i; hash: %i}\n",
             entry->key,
             entry->value,
             entry->hash);

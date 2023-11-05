@@ -66,24 +66,13 @@ int dense_hash_table_destroy(struct DenseHashTable *dht)
 
 int dense_hash_table_print(const struct DenseHashTable *dht)
 {
-    if (dht == NULL) {
-        println("Error in `dense_dht__print`: `dht` is NULL");
-        return NULLPTR_ERROR;
-    }
-
-    if (dht->indices == NULL) {
-        println("Error in `dense_dht__print`: `dht->indices` is NULL");
-        return NULLPTR_ERROR;
-    }
-
-    if (dht->entries == NULL) {
-        println("Error in `dense_dht__print`: `dht->entries` is NULL");
+    if (dht == NULL || dht->indices == NULL || dht->entries == NULL) {
         return NULLPTR_ERROR;
     }
 
     int i;
 
-    println("Size:%u\tCapacity:%u", dht->size, dht->capacity);
+    printf("Size:%u\tCapacity:%u\n", dht->size, dht->capacity);
 
     printf("The contents of `indices`: ");
     for (i = 0; i < dht->capacity; i++) {
@@ -93,13 +82,13 @@ int dense_hash_table_print(const struct DenseHashTable *dht)
             printf("%u...", *dht->indices[i]);
         }
     }
-    println("");
+    printf("\n");
 
     printf("The contents of `entries`: [\n");
     for (i = 0; i < dht->size; i++) {
         dense_hash_table_entry_print(&(dht->entries[i]));
     }
-    println("]");
+    printf("]\n");
     return ALL_OK;
 }
 
