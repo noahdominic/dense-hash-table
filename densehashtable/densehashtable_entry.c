@@ -1,8 +1,15 @@
 #include "densehashtable.h"
 
-struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int value, const int hash)
+struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const int value)
 {
     if (key == NULL) {
+        return NULL;
+    }
+
+    int *hash;
+    hash = calculate_hash(key);
+
+    if (hash == NULL) {
         return NULL;
     }
 
@@ -20,7 +27,7 @@ struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, const i
 
     strcpy(entry_ptr->key, key);
     entry_ptr->value = value;
-    entry_ptr->hash = hash;
+    entry_ptr->hash = *hash;
 
     return entry_ptr;
 }
@@ -44,9 +51,15 @@ int dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry)
     return ALL_OK;
 }
 
-int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, const int value, const int hash)
+int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, const int value)
 {
     if (entry == NULL || key == NULL) {
+        return NULLPTR_ERROR;
+    }
+
+    int *hash;
+    hash = calculate_hash(key);
+    if (hash == NULL) {
         return NULLPTR_ERROR;
     }
 
@@ -57,7 +70,7 @@ int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *ke
 
     strcpy(entry->key, key);
     entry->value = value;
-    entry->hash = hash;
+    entry->hash = *hash;
 
     return ALL_OK;
 }

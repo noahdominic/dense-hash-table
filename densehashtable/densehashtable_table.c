@@ -1,39 +1,13 @@
 #include "densehashtable.h"
 
-#define LEFT_SHIFT_BITS 5
-
-static int *calculate_hash(const char *key)
-{
-    if (key == NULL) {
-        return NULL;
-    }
-
-    int *hash = (int *) calloc(1, sizeof(int));
-
-    unsigned int len = strlen(key);
-
-    int i;
-    for (i = 0; i < len; i++) {
-        *hash = (*hash << LEFT_SHIFT_BITS) - *hash + key[i];
-    }
-
-    return hash;
-}
-
-static void dense_hash_table_register_entry(struct DenseHashTable *dht, const char *key, const unsigned int index_of_entry)
+static void dense_hash_table_register_entry(struct DenseHashTable *dht, const int hash, const unsigned int index_of_entry)
 {
     unsigned int candidate_idx;
-    int *hash;
     unsigned int mask;
 
     mask = dht->capacity;
 
-    hash = calculate_hash(key);
-    if (hash == NULL) {
-        return;
-    }
-
-    candidate_idx = *hash % mask;
+    candidate_idx = hash % mask;
 
     srand((unsigned int) clock());
     while (dht->indices[candidate_idx] != NULL) {
@@ -66,7 +40,7 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
      */
     dht->indices = (unsigned int **) calloc(dht->capacity, sizeof(unsigned int *));
     for (i = 0; i < dht->size; i++) {
-        dense_hash_table_register_entry(dht, dht->entries[i].key, i);
+        dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
     }
     return ALL_OK;
 }
@@ -161,27 +135,6 @@ int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, const i
         s_dense_hash_table_grow(dht);
     }
 
-    // unsigned int candidate_idx;
-    int *hash;
-    // unsigned int mask;
-
-    // mask = dht->capacity;
-
-    hash = calculate_hash(key);
-    if (hash == NULL) {
-        return NULLPTR_ERROR;
-    }
-
-    // /*
-    //  * Find the index for the dht entry...
-    //  */
-    // candidate_idx = *hash % mask;
-
-    // srand((unsigned int) clock());
-    // while (dht->indices[candidate_idx] != NULL) {
-    //     candidate_idx = (rand()) % mask;
-    // }
-
     /* 
      * Appropriate index is found. Now let's add the DHT entry to the list of entries.
      */
@@ -191,20 +144,15 @@ int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, const i
         return ALLOC_ERROR;
     }
     dht->entries = new_entries;
-    int dhte_set_error_code = dense_hash_table_entry_set(&(dht->entries[dht->size]), key, value, *hash);
+
+    int dhte_set_error_code = dense_hash_table_entry_set(&(dht->entries[dht->size]), key, value);
     if (dhte_set_error_code != ALL_OK) {
         return dhte_set_error_code;
     }
 
-    // dht->indices[candidate_idx] = (unsigned int *) malloc(sizeof(int));
-    // *dht->indices[candidate_idx] = dht->size;
-
-
-    dense_hash_table_register_entry(dht, key, dht->size);
+    dense_hash_table_register_entry(dht, dht->entries[dht->size].hash, dht->size);
 
     dht->size++;
-
-    free(hash);
 
     return ALL_OK;
 }

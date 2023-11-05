@@ -5,7 +5,7 @@
 #define NULLPTR_ERROR (-1)
 #define ALLOC_ERROR (-2)
 
-#define DHT_INIT_CAPACITY 4
+#define DHT_INIT_CAPACITY 8
 #define DHT_DEFAULT_GROWTH_CONST 2
 
 #include <assert.h>
@@ -30,9 +30,11 @@ struct DenseHashTable
     struct DenseHashTableEntry *entries;
 };
 
-struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value, int hash);
+int *calculate_hash(const char *key);
+
+struct DenseHashTableEntry *dense_hash_table_entry_init(const char *key, int value);
 int dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry);
-int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value, int hash);
+int dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char *key, int value);
 int dense_hash_table_entry_print(const struct DenseHashTableEntry *entry);
 
 struct DenseHashTable *dense_hash_table_init();
