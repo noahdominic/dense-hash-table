@@ -21,7 +21,7 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
     /*
      * Free old indices
      */
-    for (int i = 0; i < dht->size; i++) {
+    for (unsigned int i = 0; i < dht->size; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
             dht->indices[i] = NULL;
@@ -34,7 +34,7 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
      */
     dht->capacity *= DHT_DEFAULT_GROWTH_CONST;
     dht->indices = (unsigned int **) calloc(dht->capacity, sizeof(unsigned int *));
-    for (int i = 0; i < dht->size; i++) {
+    for (unsigned int i = 0; i < dht->size; i++) {
         dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
     }
 
@@ -74,8 +74,7 @@ int dense_hash_table_destroy(struct DenseHashTable *dht)
         }
 
         if (dht->indices != NULL) {
-            unsigned int i;
-            for (i = 0; i < dht->capacity; i++) {
+            for (unsigned int i = 0; i < dht->capacity; i++) {
                 if (dht->indices[i] != NULL) {
                     free(dht->indices[i]);
                     dht->indices[i] = NULL;
