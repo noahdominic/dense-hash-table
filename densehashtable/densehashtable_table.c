@@ -2,13 +2,11 @@
 
 static void dense_hash_table_register_entry(struct DenseHashTable *dht, const int hash, const unsigned int index_of_entry)
 {
-    unsigned int candidate_idx;
-    unsigned int mask;
     srand((unsigned int) clock());
 
-    mask = dht->capacity;
+    unsigned int mask = dht->capacity;
 
-    candidate_idx = hash % mask;
+    unsigned int candidate_idx = hash % mask;
 
     while (dht->indices[candidate_idx] != NULL) {
         candidate_idx = (rand()) % mask;
