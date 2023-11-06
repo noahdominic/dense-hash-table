@@ -97,12 +97,10 @@ int dense_hash_table_print(const struct DenseHashTable *dht)
         return NULLPTR_ERROR;
     }
 
-    int i;
-
     printf("Size:%u\tCapacity:%u\n", dht->size, dht->capacity);
 
     printf("The contents of `indices`: ");
-    for (i = 0; i < dht->capacity; i++) {
+    for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] == NULL) {
             printf("NUL...");
         } else {
@@ -112,7 +110,7 @@ int dense_hash_table_print(const struct DenseHashTable *dht)
     printf("\n");
 
     printf("The contents of `entries`: [\n");
-    for (i = 0; i < dht->size; i++) {
+    for (unsigned int i = 0; i < dht->size; i++) {
         dense_hash_table_entry_print(&(dht->entries[i]));
     }
     printf("]\n");
