@@ -119,6 +119,13 @@ int dense_hash_table_print(const struct DenseHashTable *dht)
 
 int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, const int value)
 {
+    /*
+        This flow seems to be iffy.  There's too many things that can go wrong.
+        Would be preferable to change this such that a duplicate `dht` is made
+        so that any errors that can happen will not affect the original.  Only
+        when everything goes perfectly will the new table 
+        be moved to the original.
+    */
     if (dht == NULL || key == NULL) {
         return NULLPTR_ERROR;
     }
