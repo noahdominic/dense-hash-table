@@ -130,8 +130,7 @@ int dense_hash_table_insert(struct DenseHashTable *dht, const char *key, const i
     /* 
      * Appropriate index is found. Now let's add the DHT entry to the list of entries.
      */
-    struct DenseHashTableEntry *new_entries;
-    new_entries = (struct DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry));
+    struct DenseHashTableEntry *new_entries = (struct DenseHashTableEntry *) realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry));
     if (new_entries == NULL) {
         return ALLOC_ERROR;
     }
