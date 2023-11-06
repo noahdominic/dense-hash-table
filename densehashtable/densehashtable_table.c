@@ -4,12 +4,12 @@ static void dense_hash_table_register_entry(struct DenseHashTable *dht, const in
 {
     unsigned int candidate_idx;
     unsigned int mask;
+    srand((unsigned int) clock());
 
     mask = dht->capacity;
 
     candidate_idx = hash % mask;
 
-    srand((unsigned int) clock());
     while (dht->indices[candidate_idx] != NULL) {
         candidate_idx = (rand()) % mask;
     }
@@ -20,13 +20,9 @@ static void dense_hash_table_register_entry(struct DenseHashTable *dht, const in
 
 static int s_dense_hash_table_grow(struct DenseHashTable *dht)
 {
-
-    dht->capacity *= DHT_DEFAULT_GROWTH_CONST;
-
     /*
      * Free old indices
      */
-    int i;
     for (i = 0; i < dht->size; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
@@ -38,8 +34,9 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
     /*
      * Calculate new indices
      */
+    dht->capacity *= DHT_DEFAULT_GROWTH_CONST;
     dht->indices = (unsigned int **) calloc(dht->capacity, sizeof(unsigned int *));
-    for (i = 0; i < dht->size; i++) {
+    for (int i = 0; i < dht->size; i++) {
         dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
     }
     return ALL_OK;
