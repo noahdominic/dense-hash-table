@@ -37,7 +37,7 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
     for (int i = 0; i < dht->size; i++) {
         dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
     }
-    
+
     return ALL_OK;
 }
 
@@ -47,8 +47,7 @@ int *dense_hash_table_remove(struct DenseHashTable *dht, const char *key);
 */
 struct DenseHashTable *dense_hash_table_init()
 {
-    struct DenseHashTable *dht;
-    dht = (struct DenseHashTable *) malloc(sizeof(struct DenseHashTable));
+    struct DenseHashTable *dht = (struct DenseHashTable *) malloc(sizeof(struct DenseHashTable));
     if (dht == NULL) {
         return NULL;
     }
