@@ -23,7 +23,7 @@ static int s_dense_hash_table_grow(struct DenseHashTable *dht)
     /*
      * Free old indices
      */
-    for (i = 0; i < dht->size; i++) {
+    for (int i = 0; i < dht->size; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
             dht->indices[i] = NULL;
