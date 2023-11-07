@@ -28,7 +28,7 @@ Result dense_hash_table_entry_set(struct DenseHashTableEntry *entry, const char 
     if (res.is_ok) {
         hash = res.value;
     } else {
-        return Err(res.error_code, res.error_message);
+        return res;
     }
 
     if ((entry->key = malloc(strlen(key) + 1)) == NULL) {
