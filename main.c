@@ -4,18 +4,45 @@
 #include "densehashtable.h"
 #include "rustyc.h"
 
-int main() {
-    const char *name = "Zendaya";
+int main()
+{
+    const char *names[] = {
+            "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Henry",
+            "Ivy", "Jack", "Kate", "Liam", "Mia", "Noah", "Olivia", "Peter",
+            "Quinn", "Riley", "Sam", "Tyler", "Uma", "Violet", "Will", "Xander",
+            "Yara", "Zane", "Ava", "Ben", "Chloe", "Daniel", "Emily", "Felicia"};
 
-    Result result = calculate_hash(name);
+    int values[] = {
+            42, 57, 33, 78, 23, 56, 89, 64,
+            38, 51, 77, 45, 60, 30, 94, 68,
+            72, 55, 41, 79, 62, 87, 50, 63,
+            96, 75, 80, 53, 36, 67, 98, 69};
 
-    if (result.is_ok) {
-        printf("The hash of \"%s\" is %i\n", name, result.value);
-    } else {
-        printf("Error %i.... %s\n", result.error_code, result.error_message);
-        return result.error_code;
+    struct DenseHashTable *dht;
+
+    dht = dense_hash_table_init();
+
+    for (int i = 0; i < 10; i++) {
+        Result res;
+
+        res = dense_hash_table_insert(dht, names[i], values[i]);
+
+        if (!res.is_ok) {
+            printf("Error %i: %s", res.error_code, res.error_message);
+            goto erase_all;
+        }
+
+        res = dense_hash_table_print(dht);
+
+        if (!res.is_ok) {
+            printf("Error %i: %s", res.error_code, res.error_message);
+        }
     }
 
+erase_all:
+    dense_hash_table_destroy(dht);
+
+    printf("Hello, %s", names[0]);
 
     return 0;
 }
