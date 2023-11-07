@@ -1,15 +1,13 @@
 #pragma once
 
-#define NULL 0
-
-#define NULPTR_ERR (100)
-#define ALLOC_FAIL_ERR (101)
+#define NULPTR_ERR 100
 
 #define DHT_INIT_CAPACITY 8
 #define DHT_DEFAULT_GROWTH_RATE 2
 
 #include "rustyc.h"
 #include <malloc.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 

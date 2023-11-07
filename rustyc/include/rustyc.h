@@ -1,6 +1,6 @@
 #pragma once
 
-#define NULL 0
+#include <stddef.h>
 
 /*
  * A naive C implementation of Rust's Option<int> feature.
