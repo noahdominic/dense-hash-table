@@ -12,7 +12,8 @@
  * `int[] arr` and `int search`.  There may be an instance where `search` is not
  * in `arr` (e.g.  `arr` = `{5, 6, 7, 8, 10}` and `search` = 9).
  */
-typedef struct {
+typedef struct
+{
     int is_some;
     int value;
 } Option;
@@ -31,7 +32,8 @@ Option None();
  * and returns either the content of the file as an integer or an error message.
  */
 
-typedef struct {
+typedef struct
+{
     int is_ok;
     int error_code;
     int value;
