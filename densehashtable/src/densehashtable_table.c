@@ -74,6 +74,12 @@ Result dense_hash_table_destroy(struct DenseHashTable *dht)
 {
     if (dht != NULL) {
         if (dht->entries != NULL) {
+            for (unsigned int i = 0; i < dht->size; i++) {
+                if (dht->entries[i].key != NULL) {
+                    free(dht->entries[i].key);
+                    dht->entries[i].key = NULL;
+                }
+            }
             free(dht->entries);
             dht->entries = NULL;
         }
