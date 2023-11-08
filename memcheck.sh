@@ -1,4 +1,5 @@
 #!/bin/sh
 
-valgrind --leak-check=yes --log-file=valgrind.rpt build/out
+valgrind --leak-check=yes --track-origins=yes --log-file=valgrind.rpt build/out
+cat valgrind.rpt
 
