@@ -40,9 +40,20 @@ typedef struct
     const char *error_message;
 } Result;
 
-
 Result Ok(int value);
 
 Result Ok_empty();
 
 Result Err(int error_code, const char *error_message);
+
+typedef struct
+{
+    int is_ok;
+    int error_code;
+    Option value;
+    const char *error_message;
+} ResultOption;
+
+ResultOption Ok_option(Option value);
+
+ResultOption Err_option(int error_code, const char *error_message);

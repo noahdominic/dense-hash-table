@@ -31,3 +31,15 @@ Result Err(int error_code, const char *error_message)
     Result result = {0, error_code, -666, error_message};
     return result;
 }
+
+ResultOption Ok_option(Option value)
+{
+    ResultOption result = {1, 0, value, NULL};
+    return result;
+}
+
+ResultOption Err_option(int error_code, const char *error_message)
+{
+    ResultOption result = {0, error_code, None(), error_message};
+    return result;
+}
