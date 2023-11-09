@@ -185,3 +185,40 @@ Result dense_hash_table_insert(
 
     return Ok_empty();
 }
+
+ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key)
+{
+    if (dht == NULL || key == NULL) {
+        return Err_option(
+                NULPTR_ERR,
+                "From `dense_hash_table_lookup()`: params `key` or `dht` is/are NULL.");
+    }
+
+    int hash = 0;
+    Result res = calculate_hash(key);
+    if (res.is_ok) {
+        hash = res.value;
+    } else {
+        return Err_option(res.error_code, res.error_message);
+    }
+
+    unsigned int mask = dht->capacity;
+
+    unsigned int candidate_idx = hash % mask;
+    unsigned int first_candidate = candidate_idx;
+
+    if (dht->indices[candidate_idx] == NULL) {
+        return Ok_option(None());
+    } else {
+        do {
+            if (dht->indices[candidate_idx] != NULL) {
+                if (strcmp(dht->entries[*dht->indices[candidate_idx]].key, key) == 0) {
+                    return Ok_option(Some(dht->entries[*dht->indices[candidate_idx]].value));
+                }
+            }
+
+            candidate_idx = (candidate_idx + 1) % mask;
+        } while (candidate_idx != first_candidate);
+    }
+    return Ok_option(None());
+}
