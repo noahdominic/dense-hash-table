@@ -34,9 +34,32 @@ int main()
 
         res = dense_hash_table_print(dht);
 
-        if (!res.is_ok) {
-            printf("Error %i: %s", res.error_code, res.error_message);
+        if (!res.is_ok) printf("Error %i: %s", res.error_code, res.error_message);
+    }
+
+
+    for (int i = 0; i < 16; i++) {
+        const char *name = names[i];
+        ResultOption res2 = dense_hash_table_lookup(dht, name);
+
+        if (!res2.is_ok) {
+            printf("Error %i: %s\n", res2.error_code, res2.error_message);
+        } else if (!res2.value.is_some) {
+            printf("\"%s\" is not in the hash table.\n", name);
+        } else {
+            printf("\"%s\" is: %i\n", name, res2.value.value);
         }
+    }
+
+    const char *name = NULL;
+    ResultOption res2 = dense_hash_table_lookup(dht, name);
+
+    if (!res2.is_ok) {
+        printf("Error %i: %s\n", res2.error_code, res2.error_message);
+    } else if (!res2.value.is_some) {
+        printf("\"%s\" is not in the hash table.\n", name);
+    } else {
+        printf("\"%s\" is: %i\n", name, res2.value.value);
     }
 
 erase_all:
