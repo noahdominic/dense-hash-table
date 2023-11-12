@@ -32,6 +32,11 @@ static Result s_dense_hash_table_register_entry(
 
 static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
 {
+    unsigned int **new_indices;
+    if ((new_indices = calloc(dht->capacity * DHT_DEFAULT_GROWTH_RATE, sizeof(unsigned int *))) == NULL) {
+        return Err(ALLOC_FAIL_ERR, "From s_dense_hash_table_grow: Alloc fail");
+    }
+
     /*
      * Free old indices
      */
@@ -45,8 +50,8 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
     /*
      * Calculate new indices
      */
+    dht->indices = new_indices;
     dht->capacity *= DHT_DEFAULT_GROWTH_RATE;
-    dht->indices = calloc(dht->capacity, sizeof(unsigned int *));
     for (unsigned int i = 0; i < dht->size; i++) {
         const Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
         if (!res.is_ok) {
