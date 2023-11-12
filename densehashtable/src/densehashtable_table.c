@@ -304,25 +304,6 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
     }
     const int idx_in_indices = res.value.value;
 
-    printf("The contents of `indices`: ");
-    for (unsigned int i = 0; i < dht->capacity; i++) {
-        if (dht->indices[i] == NULL) {
-            printf("NUL...");
-        } else {
-            printf("%u...", *dht->indices[i]);
-        }
-    }
-    printf("\n");
-
-    printf("The address of `indices`: ");
-    for (unsigned int i = 0; i < dht->capacity; i++) {
-        if (dht->indices[i] == NULL) {
-            printf("NUL...");
-        } else {
-            printf("%x...", dht->indices[i]);
-        }
-    }
-    printf("\n");
 
     /* Remove entries[indices[idx]] from the list */
     for (unsigned int i = *dht->indices[idx_in_indices]; i < dht->size - 1; i++) {
