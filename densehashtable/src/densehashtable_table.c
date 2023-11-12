@@ -155,6 +155,19 @@ Result dense_hash_table_insert(
                 "From `dense_hash_table_insert()`: params `key` or `dht` is/are NULL.");
     }
 
+    /*
+     * Check if there's already an entry with key *key.
+     * Return with an error if yes.
+     */
+    const ResultOption resopt = dense_hash_table_lookup(dht, key);
+    if (!resopt.is_ok) {
+        return Err(resopt.error_code, resopt.error_message);
+    }
+
+    if (resopt.value.is_some){
+        return Err(ENTRY_ALREADY_EXISTS, "From `dense_hash_table_insert`: Entry with key already exists");
+    }
+
     if (dht->size + 1 > dht->capacity) {
         Result res;
         if (!(res = s_dense_hash_table_grow(dht)).is_ok) {

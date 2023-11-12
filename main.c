@@ -37,6 +37,22 @@ int main()
         if (!res.is_ok) printf("Error %i: %s", res.error_code, res.error_message);
     }
 
+    {
+        Result res;
+
+        res = dense_hash_table_insert(dht, names[4], values[4]);
+
+        if (!res.is_ok) {
+            printf("Error %i: %s\n", res.error_code, res.error_message);
+            if (res.error_code != ENTRY_ALREADY_EXISTS) {
+                goto erase_all;
+            }
+        }
+
+        res = dense_hash_table_print(dht);
+
+        if (!res.is_ok) printf("Error %i: %s\n", res.error_code, res.error_message);
+    }
 
     for (int i = 0; i < 16; i++) {
         const char *name = names[i];
