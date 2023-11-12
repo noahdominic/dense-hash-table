@@ -190,7 +190,7 @@ Result dense_hash_table_print(const struct DenseHashTable *dht)
     // when dht->size = 0;
     printf("The contents of `entries`: [\n");
     for (unsigned int i = 0; i < dht->size; i++) {
-        dense_hash_table_entry_print(&(dht->entries[i]));
+        dense_hash_table_entry_print(&dht->entries[i]);
     }
     printf("]\n");
 
@@ -231,7 +231,7 @@ Result dense_hash_table_insert(
     }
     dht->entries = new_entries;
 
-    Result res = dense_hash_table_entry_set(&(dht->entries[dht->size]), key, value);
+    Result res = dense_hash_table_entry_set(&dht->entries[dht->size], key, value);
     if (!res.is_ok) {
         return res;
     }
