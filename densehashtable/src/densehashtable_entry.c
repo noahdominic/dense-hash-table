@@ -38,6 +38,11 @@ Result dense_hash_table_entry_set(
         return res;
     }
 
+    if (entry->key != NULL) {
+        free(entry->key);
+        entry->key = NULL;
+    }
+
     if ((entry->key = malloc(strlen(key) + 1)) == NULL) {
         return Err(ALLOC_FAIL_ERR,
                    "In `dense_hash_table_entry_set()`, malloc for `entry->key` failed.");
