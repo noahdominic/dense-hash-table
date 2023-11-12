@@ -86,9 +86,10 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
 
 static Result s_dense_hash_table_refresh_indices(const struct DenseHashTable *dht)
 {
-    if (dht == NULL) {
-        return Err(NULPTR_ERR, "From `s_dense_hash_table_refresh_indices()`: param `dht` is NULL");
-    }
+    // ? I think this check below is unreachable.
+    // if (dht == NULL) {
+    //     return Err(NULPTR_ERR, "From `s_dense_hash_table_refresh_indices()`: param `dht` is NULL");
+    // }
 
     /*
      * Free old indices
