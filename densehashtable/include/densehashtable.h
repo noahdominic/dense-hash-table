@@ -9,12 +9,6 @@
 #define DHT_DEFAULT_GROWTH_RATE 2
 
 #include "rustyc.h"
-#include <malloc.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 struct DenseHashTableEntry
 {
@@ -42,4 +36,5 @@ struct DenseHashTable *dense_hash_table_init();
 Result dense_hash_table_destroy(struct DenseHashTable *dht);
 Result dense_hash_table_print(const struct DenseHashTable *dht);
 Result dense_hash_table_insert(struct DenseHashTable *dht, const char *key, int value);
-ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key);
+ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const char *key);
+ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key);

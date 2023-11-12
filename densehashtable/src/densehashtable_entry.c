@@ -1,5 +1,10 @@
 #include "densehashtable.h"
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 void dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry)
 {
     if (entry == NULL) {
@@ -13,8 +18,6 @@ void dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry)
 
     entry->value = 0;
     entry->hash = 0;
-    free(entry);
-    entry = NULL;
 }
 
 Result dense_hash_table_entry_set(
@@ -23,11 +26,12 @@ Result dense_hash_table_entry_set(
         const int value)
 {
     if (entry == NULL || key == NULL) {
-        return Err(NULPTR_ERR, "dense_hash_table_entry_set() params `entry` incl-or `key` is NULL");
+        return Err(NULPTR_ERR,
+                   "dense_hash_table_entry_set() params `entry` incl-or `key` is NULL");
     }
 
     int hash;
-    Result res = calculate_hash(key);
+    const Result res = calculate_hash(key);
     if (res.is_ok) {
         hash = res.value;
     } else {

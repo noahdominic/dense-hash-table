@@ -4,6 +4,8 @@
 #include "densehashtable.h"
 #include "rustyc.h"
 
+#define NUM_ITEMS 10
+
 int main()
 {
     const char *names[] = {
@@ -22,7 +24,7 @@ int main()
 
     dht = dense_hash_table_init();
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < NUM_ITEMS -1; i++) {
         Result res;
 
         res = dense_hash_table_insert(dht, names[i], values[i]);
@@ -54,7 +56,7 @@ int main()
         if (!res.is_ok) printf("Error %i: %s\n", res.error_code, res.error_message);
     }
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < NUM_ITEMS; i++) {
         const char *name = names[i];
         ResultOption res2 = dense_hash_table_lookup(dht, name);
 
@@ -67,21 +69,41 @@ int main()
         }
     }
 
-    const char *name = NULL;
-    ResultOption res2 = dense_hash_table_lookup(dht, name);
+    {
+        const char *name = NULL;
+        ResultOption res2 = dense_hash_table_lookup(dht, name);
 
-    if (!res2.is_ok) {
-        printf("Error %i: %s\n", res2.error_code, res2.error_message);
-    } else if (!res2.value.is_some) {
-        printf("\"%s\" is not in the hash table.\n", name);
-    } else {
-        printf("\"%s\" is: %i\n", name, res2.value.value);
+        if (!res2.is_ok) {
+            printf("Error %i: %s\n", res2.error_code, res2.error_message);
+        } else if (!res2.value.is_some) {
+            printf("\"%s\" is not in the hash table.\n", name);
+        } else {
+            printf("\"%s\" is: %i\n", name, res2.value.value);
+        }
+    }
+
+    for (int i = 0; i < NUM_ITEMS + 1; i++) {
+        const char *name = names[i];
+        ResultOption res = dense_hash_table_delete(dht, names[i]);
+
+        if (!res.is_ok) {
+            printf("Error %i: %s", res.error_code, res.error_message);
+            goto erase_all;
+        }
+
+        if (!res.value.is_some) {
+            printf("\"%s\" is not in the hashtable\n", names[i]);
+        }
+
+        Result res2 = dense_hash_table_print(dht);
+
+        if (!res2.is_ok) printf("Error %i: %s", res2.error_code, res2.error_message);
     }
 
 erase_all:
     dense_hash_table_destroy(dht);
 
-    printf("Hello, %s", names[0]);
+    printf("Hello, %s\n", names[0]);
 
     return 0;
 }
