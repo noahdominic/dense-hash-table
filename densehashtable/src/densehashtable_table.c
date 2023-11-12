@@ -327,16 +327,11 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
      */
     dht->size--;
 
-    dense_hash_table_entry_destroy(&(dht->entries[dht->size]));
-
     struct DenseHashTableEntry *new_entries = NULL;
-
     if ((new_entries = realloc(dht->entries, dht->size * sizeof(struct DenseHashTableEntry))) == NULL && dht->size > 0) {
-
         return Err_option(ALLOC_FAIL_ERR,
                           "From `dense_hash_table_delete()`: `dht->entries` realloc failed.");
     }
-
     dht->entries = new_entries;
 
     if (dht->size <= dht->capacity / DHT_DEFAULT_GROWTH_RATE & dht->capacity > DHT_INIT_CAPACITY) {
