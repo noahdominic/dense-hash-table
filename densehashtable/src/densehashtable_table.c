@@ -274,17 +274,17 @@ ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const cha
 
     if (dht->indices[candidate_idx] == NULL) {
         return Ok_option(None());
-    } else {
-        do {
-            if (dht->indices[candidate_idx] != NULL) {
-                if (strcmp(dht->entries[*dht->indices[candidate_idx]].key, key) == 0) {
-                    return Ok_option(Some(candidate_idx));
-                }
-            }
-
-            candidate_idx = (candidate_idx + 1) % mask;
-        } while (candidate_idx != first_candidate);
     }
+
+    do {
+        if (dht->indices[candidate_idx] != NULL) {
+            if (strcmp(dht->entries[*dht->indices[candidate_idx]].key, key) == 0) {
+                return Ok_option(Some(candidate_idx));
+            }
+        }
+        candidate_idx = (candidate_idx + 1) % mask;
+    } while (candidate_idx != first_candidate);
+
     return Ok_option(None());
 }
 
