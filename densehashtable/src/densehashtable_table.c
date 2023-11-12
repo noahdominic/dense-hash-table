@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
+static unsigned int s_update_idx(const unsigned int candidate_idx, const unsigned int mask, const unsigned int num_attempts)
+{
+    collision_count++;
+    return (candidate_idx + 1) % mask;
+}
 
 static Result s_dense_hash_table_register_entry(
         const struct DenseHashTable *dht,
@@ -13,8 +20,9 @@ static Result s_dense_hash_table_register_entry(
     /* Find free slot in table */
     const unsigned int mask = dht->capacity;
     unsigned int candidate_idx = hash % mask;
+    unsigned int num_tries = 1;
     while (dht->indices[candidate_idx] != NULL) {
-        candidate_idx = (candidate_idx + 1) % mask;
+        candidate_idx = s_update_idx(candidate_idx, mask, num_tries);
     }
 
     /* Add int to the free slot */
@@ -108,6 +116,9 @@ static Result s_dense_hash_table_refresh_indices(const struct DenseHashTable *dh
 
 struct DenseHashTable *dense_hash_table_init()
 {
+    srand(time(NULL));
+    collision_count = 0;
+
     struct DenseHashTable *dht;
     if ((dht = malloc(sizeof(struct DenseHashTable))) == NULL) {
         return NULL;
@@ -220,7 +231,7 @@ Result dense_hash_table_insert(
     /*
      * Check if entry already exists.  Return an error if yes.
      */
-    if (resopt.value.is_some){
+    if (resopt.value.is_some) {
         return Err(ENTRY_ALREADY_EXISTS, "From `dense_hash_table_insert`: Entry with key already exists");
     }
 
@@ -237,7 +248,7 @@ Result dense_hash_table_insert(
     /* 
      * Appropriate index is found.  Add the DHT entry to the list of entries.
      */
-    struct DenseHashTableEntry *new_entries;
+    struct DenseHashTableEntry *new_entries = NULL;
     if ((new_entries = realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry))) == NULL) {
         return Err(ALLOC_FAIL_ERR, "From `dense_hash_table_insert()`: `dht->entries` cannot be reallocated.");
     }
@@ -295,6 +306,7 @@ ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const cha
         return Ok_option(None());
     }
 
+    unsigned int num_tries = 1;
     // Perform linear probing to find the key in the hash table
     do {
         if (dht->indices[candidate_idx] != NULL) {
@@ -304,8 +316,9 @@ ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const cha
                 return Ok_option(Some(candidate_idx));
             }
         }
-        // Move to the next candidate index using linear probing
-        candidate_idx = (candidate_idx + 1) % mask;
+
+        candidate_idx = s_update_idx(candidate_idx, mask, num_tries);
+        num_tries++;
     } while (candidate_idx != first_candidate);
 
     // If the loop completes without finding the key, return an option indicating key not found
