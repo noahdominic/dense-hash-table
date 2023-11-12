@@ -331,6 +331,8 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
             return Err_option(res2.error_code, res2.error_message);
         }
     }
+    /* Destroy last element of entries */
+    dense_hash_table_entry_destroy(&dht->entries[dht->size - 1]);
 
     /* Reset indices[idx] to NULL */
     if (dht->indices[idx_in_indices] != NULL) {
