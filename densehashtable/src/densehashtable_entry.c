@@ -31,7 +31,7 @@ Result dense_hash_table_entry_set(
     }
 
     int hash;
-    Result res = calculate_hash(key);
+    const Result res = calculate_hash(key);
     if (res.is_ok) {
         hash = res.value;
     } else {

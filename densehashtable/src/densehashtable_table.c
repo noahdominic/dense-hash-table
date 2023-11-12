@@ -7,13 +7,13 @@
 #include <time.h>
 
 static Result s_dense_hash_table_register_entry(
-        struct DenseHashTable *dht,
+        const struct DenseHashTable *dht,
         const int hash,
         const unsigned int index_of_entry)
 {
     srand(clock());
 
-    unsigned int mask = dht->capacity;
+    const unsigned int mask = dht->capacity;
 
     unsigned int candidate_idx = hash % mask;
 
@@ -48,7 +48,7 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
     dht->capacity *= DHT_DEFAULT_GROWTH_RATE;
     dht->indices = calloc(dht->capacity, sizeof(unsigned int *));
     for (unsigned int i = 0; i < dht->size; i++) {
-        Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
+        const Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
         if (!res.is_ok) {
             return res;
         }
@@ -75,7 +75,7 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
     dht->capacity = dht->capacity / DHT_DEFAULT_GROWTH_RATE;
     dht->indices = calloc(dht->capacity, sizeof(unsigned int *));
     for (unsigned int i = 0; i < dht->size; i++) {
-        Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
+        const Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
         if (!res.is_ok) {
             return res;
         }
@@ -102,7 +102,7 @@ static Result s_dense_hash_table_refresh_indices(struct DenseHashTable *dht)
      * Calculate new indices
      */
     for (unsigned int i = 0; i < dht->size; i++) {
-        Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
+        const Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
         if (!res.is_ok) {
             return res;
         }
@@ -215,8 +215,8 @@ Result dense_hash_table_insert(
     }
 
     if (dht->size + 1 > dht->capacity) {
-        Result res;
-        if (!(res = s_dense_hash_table_grow(dht)).is_ok) {
+        const Result res = s_dense_hash_table_grow(dht);
+        if (!res.is_ok) {
             return res;
         }
     }
@@ -245,7 +245,7 @@ Result dense_hash_table_insert(
     return Ok_empty();
 }
 
-ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key)
+ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const char *key)
 {
     if (dht == NULL || key == NULL) {
         return Err_option(
@@ -253,18 +253,18 @@ ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key
                 "From `dense_hash_table_lookup()`: params `key` or `dht` is/are NULL.");
     }
 
-    int hash = 0;
-    Result res = calculate_hash(key);
+    int hash;
+    const Result res = calculate_hash(key);
     if (res.is_ok) {
         hash = res.value;
     } else {
         return Err_option(res.error_code, res.error_message);
     }
 
-    unsigned int mask = dht->capacity;
+    const unsigned int mask = dht->capacity;
 
     unsigned int candidate_idx = hash % mask;
-    unsigned int first_candidate = candidate_idx;
+    const unsigned int first_candidate = candidate_idx;
 
     if (dht->indices[candidate_idx] == NULL) {
         return Ok_option(None());
@@ -292,11 +292,11 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
     }
 
     /* Getting the index in indices */
-    ResultOption res = dense_hash_table_lookup(dht, key);
+    const ResultOption res = dense_hash_table_lookup(dht, key);
     if (!res.is_ok || !res.value.is_some) {
         return res;
     }
-    int idx_in_indices = res.value.value;
+    const int idx_in_indices = res.value.value;
 
     printf("The contents of `indices`: ");
     for (unsigned int i = 0; i < dht->capacity; i++) {
@@ -320,8 +320,7 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
 
     /* Remove entries[indices[idx]] from the list */
     for (unsigned int i = *dht->indices[idx_in_indices]; i < dht->size - 1; i++) {
-        printf("Moving %u to %u\n", i + 1, i);
-        Result res2 = dense_hash_table_entry_set(&(dht->entries[i]), dht->entries[i + 1].key, dht->entries[i + 1].value);
+        const Result res2 = dense_hash_table_entry_set(&dht->entries[i], dht->entries[i + 1].key, dht->entries[i + 1].value);
         if (!res2.is_ok) {
             return Err_option(res2.error_code, res2.error_message);
         }
@@ -361,11 +360,12 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
 
     if (dht->size <= (dht->capacity / DHT_DEFAULT_GROWTH_RATE) & dht->capacity > DHT_INIT_CAPACITY) {
         Result res2 = s_dense_hash_table_shrink(dht);
+        const Result res2 = s_dense_hash_table_shrink(dht);
         if (res2.is_ok == 0) {
             return Err_option(res2.error_code, res2.error_message);
         }
     } else {
-        Result res2 = s_dense_hash_table_refresh_indices(dht);
+        const Result res2 = s_dense_hash_table_refresh_indices(dht);
         if (res2.is_ok == 0) {
             return Err_option(res2.error_code, res2.error_message);
         }
