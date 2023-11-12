@@ -1,5 +1,11 @@
 #include "densehashtable.h"
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 static Result s_dense_hash_table_register_entry(
         struct DenseHashTable *dht,
         const int hash,

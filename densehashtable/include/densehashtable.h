@@ -8,12 +8,6 @@
 #define DHT_DEFAULT_GROWTH_RATE 2
 
 #include "rustyc.h"
-#include <malloc.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 struct DenseHashTableEntry
 {

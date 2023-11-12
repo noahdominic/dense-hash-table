@@ -1,5 +1,8 @@
 #include "densehashtable.h"
 
+
+#include <string.h>
+
 #define LEFT_SHIFT_BIT_AMOUNT 5
 
 Result calculate_hash(const char *key)
