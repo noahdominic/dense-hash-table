@@ -13,8 +13,6 @@ void dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry)
 
     entry->value = 0;
     entry->hash = 0;
-    free(entry);
-    entry = NULL;
 }
 
 Result dense_hash_table_entry_set(
@@ -23,7 +21,8 @@ Result dense_hash_table_entry_set(
         const int value)
 {
     if (entry == NULL || key == NULL) {
-        return Err(NULPTR_ERR, "dense_hash_table_entry_set() params `entry` incl-or `key` is NULL");
+        return Err(NULPTR_ERR,
+                   "dense_hash_table_entry_set() params `entry` incl-or `key` is NULL");
     }
 
     int hash;

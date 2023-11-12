@@ -12,7 +12,7 @@ static Result s_dense_hash_table_register_entry(
     unsigned int candidate_idx = hash % mask;
 
     while (dht->indices[candidate_idx] != NULL) {
-        candidate_idx = (rand()) % mask;
+        candidate_idx = (candidate_idx + 1) % mask;
     }
 
     if ((dht->indices[candidate_idx] = malloc(sizeof(int))) == NULL) {
@@ -29,7 +29,7 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
     /*
      * Free old indices
      */
-    for (unsigned int i = 0; i < dht->size; i++) {
+    for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
             dht->indices[i] = NULL;
@@ -48,6 +48,59 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
         }
     }
 
+    return Ok_empty();
+}
+
+static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
+{
+    /*
+     * Free old indices
+     */
+    for (unsigned int i = 0; i < dht->capacity; i++) {
+        if (dht->indices[i] != NULL) {
+            free(dht->indices[i]);
+            dht->indices[i] = NULL;
+        }
+    }
+    free(dht->indices);
+    /*
+     * Calculate new indices
+     */
+    dht->capacity = dht->capacity / DHT_DEFAULT_GROWTH_RATE;
+    dht->indices = calloc(dht->capacity, sizeof(unsigned int *));
+    for (unsigned int i = 0; i < dht->size; i++) {
+        Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
+        if (!res.is_ok) {
+            return res;
+        }
+    }
+
+    return Ok_empty();
+}
+
+static Result s_dense_hash_table_refresh_indices(struct DenseHashTable *dht)
+{
+    if (dht == NULL) {
+        return Err(NULPTR_ERR, "From `s_dense_hash_table_refresh_indices()`: param `dht` is NULL");
+    }
+
+    /*
+     * Free old indices
+     */
+    for (unsigned int i = 0; i < dht->capacity; i++) {
+        if (dht->indices[i] != NULL) {
+            dht->indices[i] = NULL;
+        }
+    }
+    /*
+     * Calculate new indices
+     */
+    for (unsigned int i = 0; i < dht->size; i++) {
+        Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
+        if (!res.is_ok) {
+            return res;
+        }
+    }
     return Ok_empty();
 }
 
@@ -213,7 +266,7 @@ ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key
         do {
             if (dht->indices[candidate_idx] != NULL) {
                 if (strcmp(dht->entries[*dht->indices[candidate_idx]].key, key) == 0) {
-                    return Ok_option(Some(dht->entries[*dht->indices[candidate_idx]].value));
+                    return Ok_option(Some(candidate_idx));
                 }
             }
 
@@ -221,4 +274,97 @@ ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key
         } while (candidate_idx != first_candidate);
     }
     return Ok_option(None());
+}
+
+ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key)
+{
+    /* Input validation */
+    if (dht == NULL || key == NULL) {
+        return Err_option(
+                NULPTR_ERR,
+                "From `dense_hash_table_delete()`: params `key` or `dht` is/are NULL.");
+    }
+
+    /* Getting the index in indices */
+    ResultOption res = dense_hash_table_lookup(dht, key);
+    if (!res.is_ok || !res.value.is_some) {
+        return res;
+    }
+    int idx_in_indices = res.value.value;
+
+    printf("The contents of `indices`: ");
+    for (unsigned int i = 0; i < dht->capacity; i++) {
+        if (dht->indices[i] == NULL) {
+            printf("NUL...");
+        } else {
+            printf("%u...", *dht->indices[i]);
+        }
+    }
+    printf("\n");
+
+    printf("The address of `indices`: ");
+    for (unsigned int i = 0; i < dht->capacity; i++) {
+        if (dht->indices[i] == NULL) {
+            printf("NUL...");
+        } else {
+            printf("%x...", dht->indices[i]);
+        }
+    }
+    printf("\n");
+
+    /* Remove entries[indices[idx]] from the list */
+    for (unsigned int i = *dht->indices[idx_in_indices]; i < dht->size - 1; i++) {
+        printf("Moving %u to %u\n", i + 1, i);
+        Result res2 = dense_hash_table_entry_set(&(dht->entries[i]), dht->entries[i + 1].key, dht->entries[i + 1].value);
+        if (!res2.is_ok) {
+            return Err_option(res2.error_code, res2.error_message);
+        }
+    }
+
+    /* Reset indices[idx] to NULL */
+    if (dht->indices[idx_in_indices] != NULL) {
+        free(dht->indices[idx_in_indices]);
+        dht->indices[idx_in_indices] = NULL;
+    }
+
+    printf("\n");
+
+    printf("The address of `indices`: ");
+    for (unsigned int i = 0; i < dht->capacity; i++) {
+        if (dht->indices[i] == NULL) {
+            printf("NUL...");
+        } else {
+            printf("%x...", dht->indices[i]);
+        }
+    }
+    printf("\n");
+
+    dht->size--;
+
+    dense_hash_table_entry_destroy(&(dht->entries[dht->size]));
+
+    struct DenseHashTableEntry *new_entries = NULL;
+
+    if ((new_entries = realloc(dht->entries, dht->size * sizeof(struct DenseHashTableEntry))) == NULL && dht->size > 0) {
+
+        return Err_option(ALLOC_FAIL_ERR,
+                          "From `dense_hash_table_delete()`: `dht->entries` realloc failed.");
+    }
+
+    dht->entries = new_entries;
+
+    if (dht->size <= (dht->capacity / DHT_DEFAULT_GROWTH_RATE) & dht->capacity > DHT_INIT_CAPACITY) {
+        Result res2 = s_dense_hash_table_shrink(dht);
+        if (res2.is_ok == 0) {
+            return Err_option(res2.error_code, res2.error_message);
+        }
+    } else {
+        Result res2 = s_dense_hash_table_refresh_indices(dht);
+        if (res2.is_ok == 0) {
+            return Err_option(res2.error_code, res2.error_message);
+        }
+    }
+
+    return Ok_option(Some(idx_in_indices));
+
 }

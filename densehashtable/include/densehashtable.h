@@ -42,3 +42,4 @@ Result dense_hash_table_destroy(struct DenseHashTable *dht);
 Result dense_hash_table_print(const struct DenseHashTable *dht);
 Result dense_hash_table_insert(struct DenseHashTable *dht, const char *key, int value);
 ResultOption dense_hash_table_lookup(struct DenseHashTable *dht, const char *key);
+ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key);
