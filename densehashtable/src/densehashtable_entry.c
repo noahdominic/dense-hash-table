@@ -58,7 +58,7 @@ Result dense_hash_table_entry_set(
 Result dense_hash_table_entry_print(const struct DenseHashTableEntry *entry)
 {
     if (entry == NULL) {
-        return Err(NULPTR_ERR, "`dense_hash_table_entry_print()` param `entry` is NULL.");
+        return Err(NULPTR_ERR, "In `dense_hash_table_entry_print()`, param `entry` is NULL.");
     }
 
     printf("{key: %s\tvalue: %i\thash: %i}\n",

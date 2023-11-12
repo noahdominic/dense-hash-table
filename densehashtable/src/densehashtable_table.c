@@ -10,14 +10,14 @@ static Result s_dense_hash_table_register_entry(
         const int hash,
         const unsigned int index_of_entry)
 {
+    /* Find free slot in table */
     const unsigned int mask = dht->capacity;
-
     unsigned int candidate_idx = hash % mask;
-
     while (dht->indices[candidate_idx] != NULL) {
         candidate_idx = (candidate_idx + 1) % mask;
     }
 
+    /* Add int to the free slot */
     if ((dht->indices[candidate_idx] = malloc(sizeof(int))) == NULL) {
         return Err(ALLOC_FAIL_ERR,
                    "From `s_dense_hash_table_register_entry()`: `dht->indices[candidate_idx]` cannot be malloced");
@@ -34,9 +34,7 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
         return Err(ALLOC_FAIL_ERR, "From s_dense_hash_table_grow: Alloc fail");
     }
 
-    /*
-     * Free old indices
-     */
+    /* Free old indices */
     for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
@@ -44,9 +42,8 @@ static Result s_dense_hash_table_grow(struct DenseHashTable *dht)
         }
     }
     free(dht->indices);
-    /*
-     * Calculate new indices
-     */
+
+    /* Calculate new indices */
     dht->indices = new_indices;
     dht->capacity *= DHT_DEFAULT_GROWTH_RATE;
     for (unsigned int i = 0; i < dht->size; i++) {
@@ -66,9 +63,7 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
         return Err(ALLOC_FAIL_ERR, "From s_dense_hash_table_grow: Alloc fail");
     }
 
-    /*
-     * Free old indices
-     */
+    /* Free old indices */
     for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
@@ -76,9 +71,8 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
         }
     }
     free(dht->indices);
-    /*
-     * Calculate new indices
-     */
+
+    /* Calculate new indices */
     dht->capacity /= DHT_DEFAULT_GROWTH_RATE;
     dht->indices = new_indices;
     for (unsigned int i = 0; i < dht->size; i++) {
@@ -93,29 +87,22 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
 
 static Result s_dense_hash_table_refresh_indices(const struct DenseHashTable *dht)
 {
-    // ? I think this check below is unreachable.
-    // if (dht == NULL) {
-    //     return Err(NULPTR_ERR, "From `s_dense_hash_table_refresh_indices()`: param `dht` is NULL");
-    // }
-
-    /*
-     * Free old indices
-     */
+    /* Free old indices */
     for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] != NULL) {
             free(dht->indices[i]);
             dht->indices[i] = NULL;
         }
     }
-    /*
-     * Calculate new indices
-     */
+
+    /* Calculate new indices */
     for (unsigned int i = 0; i < dht->size; i++) {
         const Result res = s_dense_hash_table_register_entry(dht, dht->entries[i].hash, i);
         if (!res.is_ok) {
             return res;
         }
     }
+
     return Ok_empty();
 }
 
@@ -140,6 +127,8 @@ struct DenseHashTable *dense_hash_table_init()
 
 Result dense_hash_table_destroy(struct DenseHashTable *dht)
 {
+    // We don't return an error here in case dht==NULL.
+    // Attempting to destroy a null pointer should not result in an error.
     if (dht != NULL) {
         if (dht->entries != NULL) {
             for (unsigned int i = 0; i < dht->size; i++) {
@@ -174,10 +163,6 @@ Result dense_hash_table_print(const struct DenseHashTable *dht)
 {
     if (dht == NULL) {
         return Err(NULPTR_ERR, "From `dense_hash_table_print(): param `dht` is NULL");
-    }
-
-    if (dht->indices == NULL) {
-        return Err(DHT_NOT_INITIALISED, "From `dense_hash_table_print(): param `dht` is uninitialised");
     }
 
     printf("Size:%u\tCapacity:%u\n", dht->size, dht->capacity);
@@ -232,10 +217,16 @@ Result dense_hash_table_insert(
         return Err(resopt.error_code, resopt.error_message);
     }
 
+    /*
+     * Check if entry already exists.  Return an error if yes.
+     */
     if (resopt.value.is_some){
         return Err(ENTRY_ALREADY_EXISTS, "From `dense_hash_table_insert`: Entry with key already exists");
     }
 
+    /*
+     * Grow capacity if necessary.
+     */
     if (dht->size + 1 > dht->capacity) {
         const Result res = s_dense_hash_table_grow(dht);
         if (!res.is_ok) {
@@ -244,7 +235,7 @@ Result dense_hash_table_insert(
     }
 
     /* 
-     * Appropriate index is found. Now let's add the DHT entry to the list of entries.
+     * Appropriate index is found.  Add the DHT entry to the list of entries.
      */
     struct DenseHashTableEntry *new_entries;
     if ((new_entries = realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry))) == NULL) {
@@ -269,13 +260,18 @@ Result dense_hash_table_insert(
 
 ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const char *key)
 {
+    // Check if the input parameters are valid
     if (dht == NULL || key == NULL) {
+        // If either parameter is NULL, return an error result with a message
         return Err_option(
                 NULPTR_ERR,
                 "From `dense_hash_table_lookup()`: params `key` or `dht` is/are NULL.");
     }
 
     int hash;
+
+    // Calculate the hash value for the given key.  If hash calculation fails,
+    // return an error result with the appropriate message
     const Result res = calculate_hash(key);
     if (res.is_ok) {
         hash = res.value;
@@ -285,22 +281,29 @@ ResultOption dense_hash_table_lookup(const struct DenseHashTable *dht, const cha
 
     const unsigned int mask = dht->capacity;
 
+    // Calculate the initial candidate index based on the hash value
     unsigned int candidate_idx = hash % mask;
     const unsigned int first_candidate = candidate_idx;
 
+    // If the entry at the initial candidate index is NULL, the key is not present
     if (dht->indices[candidate_idx] == NULL) {
         return Ok_option(None());
     }
 
+    // Perform linear probing to find the key in the hash table
     do {
         if (dht->indices[candidate_idx] != NULL) {
+            // If a non-NULL entry is found, compare keys
             if (strcmp(dht->entries[*dht->indices[candidate_idx]].key, key) == 0) {
+                // If the keys match, return an option with the index of the found key
                 return Ok_option(Some(candidate_idx));
             }
         }
+        // Move to the next candidate index using linear probing
         candidate_idx = (candidate_idx + 1) % mask;
     } while (candidate_idx != first_candidate);
 
+    // If the loop completes without finding the key, return an option indicating key not found
     return Ok_option(None());
 }
 
