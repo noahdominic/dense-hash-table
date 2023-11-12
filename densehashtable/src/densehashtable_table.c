@@ -241,6 +241,11 @@ Result dense_hash_table_insert(
     if ((new_entries = realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry))) == NULL) {
         return Err(ALLOC_FAIL_ERR, "From `dense_hash_table_insert()`: `dht->entries` cannot be reallocated.");
     }
+    /*
+     * Newly allocated slot may have garbage data.  Clean up.
+     */
+    new_entries[dht->size].key = NULL;
+
     dht->entries = new_entries;
 
     Result res = dense_hash_table_entry_set(&dht->entries[dht->size], key, value);
