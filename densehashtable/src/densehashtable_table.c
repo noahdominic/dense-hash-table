@@ -4,15 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 static Result s_dense_hash_table_register_entry(
         const struct DenseHashTable *dht,
         const int hash,
         const unsigned int index_of_entry)
 {
-    srand(clock());
-
     const unsigned int mask = dht->capacity;
 
     unsigned int candidate_idx = hash % mask;
