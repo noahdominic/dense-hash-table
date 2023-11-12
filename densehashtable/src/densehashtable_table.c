@@ -340,18 +340,10 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
         dht->indices[idx_in_indices] = NULL;
     }
 
-    printf("\n");
-
-    printf("The address of `indices`: ");
-    for (unsigned int i = 0; i < dht->capacity; i++) {
-        if (dht->indices[i] == NULL) {
-            printf("NUL...");
-        } else {
-            printf("%x...", dht->indices[i]);
-        }
-    }
-    printf("\n");
-
+    /* Reduce size now
+     * ! Hint: Some functions below, such as `s_dense_hash_table_shrink`
+     *         need dht->size to be realtime accurate.
+     */
     dht->size--;
 
     dense_hash_table_entry_destroy(&(dht->entries[dht->size]));
