@@ -346,6 +346,5 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
         }
     }
 
-    return Ok_option(Some(idx_in_indices));
-
+    return Ok_option(Some(777));
 }
