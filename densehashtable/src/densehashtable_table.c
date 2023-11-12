@@ -103,6 +103,7 @@ static Result s_dense_hash_table_refresh_indices(const struct DenseHashTable *dh
      */
     for (unsigned int i = 0; i < dht->capacity; i++) {
         if (dht->indices[i] != NULL) {
+            free(dht->indices[i]);
             dht->indices[i] = NULL;
         }
     }
