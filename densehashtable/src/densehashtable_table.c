@@ -84,7 +84,7 @@ static Result s_dense_hash_table_shrink(struct DenseHashTable *dht)
     return Ok_empty();
 }
 
-static Result s_dense_hash_table_refresh_indices(struct DenseHashTable *dht)
+static Result s_dense_hash_table_refresh_indices(const struct DenseHashTable *dht)
 {
     if (dht == NULL) {
         return Err(NULPTR_ERR, "From `s_dense_hash_table_refresh_indices()`: param `dht` is NULL");
@@ -358,8 +358,7 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
 
     dht->entries = new_entries;
 
-    if (dht->size <= (dht->capacity / DHT_DEFAULT_GROWTH_RATE) & dht->capacity > DHT_INIT_CAPACITY) {
-        Result res2 = s_dense_hash_table_shrink(dht);
+    if (dht->size <= dht->capacity / DHT_DEFAULT_GROWTH_RATE & dht->capacity > DHT_INIT_CAPACITY) {
         const Result res2 = s_dense_hash_table_shrink(dht);
         if (res2.is_ok == 0) {
             return Err_option(res2.error_code, res2.error_message);
