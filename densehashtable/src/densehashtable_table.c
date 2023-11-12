@@ -119,10 +119,13 @@ struct DenseHashTable *dense_hash_table_init()
     srand(time(NULL));
     collision_count = 0;
 
-    struct DenseHashTable *dht;
+    struct DenseHashTable *dht = NULL;
     if ((dht = malloc(sizeof(struct DenseHashTable))) == NULL) {
         return NULL;
     }
+
+    dht->indices = NULL;
+    dht->entries = NULL;
 
     if ((dht->indices = calloc(DHT_INIT_CAPACITY, sizeof(unsigned int *))) == NULL) {
         free(dht);
@@ -249,6 +252,7 @@ Result dense_hash_table_insert(
      * Appropriate index is found.  Add the DHT entry to the list of entries.
      */
     struct DenseHashTableEntry *new_entries = NULL;
+
     if ((new_entries = realloc(dht->entries, (dht->size + 1) * sizeof(struct DenseHashTableEntry))) == NULL) {
         return Err(ALLOC_FAIL_ERR, "From `dense_hash_table_insert()`: `dht->entries` cannot be reallocated.");
     }
@@ -365,7 +369,7 @@ ResultOption dense_hash_table_delete(struct DenseHashTable *dht, const char *key
     dht->size--;
 
     struct DenseHashTableEntry *new_entries = NULL;
-    if ((new_entries = realloc(dht->entries, dht->size * sizeof(struct DenseHashTableEntry))) == NULL && dht->size > 0) {
+    if (dht->size && (new_entries = realloc(dht->entries, dht->size * sizeof(struct DenseHashTableEntry))) == NULL) {
         return Err_option(ALLOC_FAIL_ERR,
                           "From `dense_hash_table_delete()`: `dht->entries` realloc failed.");
     }
