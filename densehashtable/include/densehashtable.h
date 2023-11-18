@@ -1,14 +1,26 @@
 #pragma once
 
-#define NULPTR_ERR 100
-#define ALLOC_FAIL_ERR 101
-#define DHT_NOT_INITIALISED 102
-#define ENTRY_ALREADY_EXISTS 103
 
 #define DHT_INIT_CAPACITY 8
 #define DHT_DEFAULT_GROWTH_RATE 2
 
 #include "rustyc.h"
+
+enum DhtErrorCode
+{
+  E_DHT_NULL,        // `dht` is NULL
+  E_DHT_E_NULL,
+  E_FUNC_PARAM_NULL, // A param called `key` is NULL
+  E_ALLOC_FAIL,      // Result of `malloc`/`calloc`/`realloc` is NULL.
+};
+
+static const char* DhtErrorMessages[] = {
+  "`dht`, `dht->indices`, or `dht->entries` is NULL.\n",
+  "A DHT entry is NULL.\n",
+  "A non-DHT function parameter is NULL.\n",
+  "Result of `malloc`/`calloc`/`realloc` is NULL.\n"
+};
+
 
 struct DenseHashTableEntry
 {
