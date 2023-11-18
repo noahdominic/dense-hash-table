@@ -1,5 +1,6 @@
 #pragma once
 
+#define FREE(ptr) do { free(ptr); ptr = 0; } while (0)
 
 #define DHT_INIT_CAPACITY 8
 #define DHT_DEFAULT_GROWTH_RATE 2
