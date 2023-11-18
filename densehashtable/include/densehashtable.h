@@ -35,7 +35,7 @@ struct DenseHashTable
 {
     unsigned int size;
     unsigned int capacity;
-    unsigned int **indices;
+    int *indices;
     struct DenseHashTableEntry *entries;
 };
 
