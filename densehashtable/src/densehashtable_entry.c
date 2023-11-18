@@ -1,70 +1,79 @@
 #include "densehashtable.h"
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void dense_hash_table_entry_destroy(struct DenseHashTableEntry *entry)
+void
+dense_hash_table_entry_cleanup(struct DenseHashTableEntry* entry)
 {
-    if (entry == NULL) {
-        return;
-    }
+  if (entry == NULL) {
+    return;
+  }
 
-    if (entry->key != NULL) {
-        free(entry->key);
-        entry->key = NULL;
-    }
+  free(entry->key);
+  entry->key = NULL;
 
-    entry->value = 0;
-    entry->hash = 0;
+  entry->value = 0;
+  entry->hash = 0;
 }
 
-Result dense_hash_table_entry_set(
-        struct DenseHashTableEntry *entry,
-        const char *key,
-        const int value)
+Result
+dense_hash_table_entry_set(struct DenseHashTableEntry* entry,
+                           const char* key,
+                           const int value)
 {
-    if (entry == NULL || key == NULL) {
-        return Err(NULPTR_ERR,
-                   "dense_hash_table_entry_set() params `entry` incl-or `key` is NULL");
-    }
+  int hash;
 
-    int hash;
-    const Result res = calculate_hash(key);
-    if (res.is_ok) {
-        hash = res.value;
-    } else {
-        return res;
-    }
+  if (entry == NULL) {
+    puts("Called from `dense_hash_table_entry_set\n"
+         "Trying to: Verify param `entry`\n");
+    return Err(E_DHT_E_NULL, DhtErrorMessages[E_DHT_E_NULL]);
+  }
 
-    if (entry->key != NULL) {
-        free(entry->key);
-        entry->key = NULL;
-    }
+  if (key == NULL) {
+    puts("Called from: `dense_hash_table_entry_set()`\n"
+         "Trying to: Verify param `key`\n");
+    return Err(E_FUNC_PARAM_NULL, DhtErrorMessages[E_FUNC_PARAM_NULL]);
+  }
 
-    if ((entry->key = malloc(strlen(key) + 1)) == NULL) {
-        return Err(ALLOC_FAIL_ERR,
-                   "In `dense_hash_table_entry_set()`, malloc for `entry->key` failed.");
-    }
+  const Result res = calculate_hash(key);
+  if (res.is_ok) {
+    hash = res.value;
+  } else {
+    puts("Called from: `dense_hash_table_entry_set()`\n"
+         "Trying to: Call `calculate_hash()`\n");
+    return Err(E_FUNC_PARAM_NULL, DhtErrorMessages[E_FUNC_PARAM_NULL]);
+  }
 
-    strcpy(entry->key, key);
-    entry->value = value;
-    entry->hash = hash;
+  // This `free` block SHOULDN'T be necessary.   I have no idea why sometimes
+  // entry->key isn't NULL.
+  FREE(entry->key);
 
-    return Ok_empty();
+  if ((entry->key = malloc(strlen(key) + 1)) == NULL) {
+    puts("Called from: `dense_hash_table_entry_set()`\n"
+         "Trying to: Alloc `entry->key`\n");
+    return Err(E_ALLOC_FAIL, DhtErrorMessages[E_ALLOC_FAIL]);
+  }
+
+  strcpy(entry->key, key);
+  entry->value = value;
+  entry->hash = hash;
+
+  return Ok_empty();
 }
 
-Result dense_hash_table_entry_print(const struct DenseHashTableEntry *entry)
+Result
+dense_hash_table_entry_print(const struct DenseHashTableEntry* entry)
 {
-    if (entry == NULL) {
-        return Err(NULPTR_ERR, "In `dense_hash_table_entry_print()`, param `entry` is NULL.");
-    }
+  if (entry == NULL) {
+    puts("Called from `dense_hash_table_entry_print\n"
+         "Trying to: Verify param `entry`\n");
+    return Err(E_DHT_E_NULL, DhtErrorMessages[E_DHT_E_NULL]);
+  }
 
-    printf("{key: %s\tvalue: %i\thash: %i}\n",
-           entry->key,
-           entry->value,
-           entry->hash);
+  printf(
+    "{key: %s\tvalue: %i\thash: %i}\n", entry->key, entry->value, entry->hash);
 
-    return Ok_empty();
+  return Ok_empty();
 }
