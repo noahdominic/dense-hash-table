@@ -1,4 +1,4 @@
-
 BasedOnStyle: Mozilla
 TabWidth: 8
 UseTab: Never
+AlwaysBreakAfterReturnType: TopLevelDefinitions
