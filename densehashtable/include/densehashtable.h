@@ -41,8 +41,6 @@ struct DenseHashTable
   struct DenseHashTableEntry* entries;
 };
 
-extern unsigned long long collision_count;
-
 Result calculate_hash(const char* key);
 
 void dense_hash_table_entry_cleanup(struct DenseHashTableEntry* entry);

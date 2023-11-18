@@ -12,11 +12,11 @@ s_probing_func(const unsigned int candidate_idx,
                const unsigned int mask,
                const unsigned int num_attempts)
 {
-  collision_count++;
-  //    return (candidate_idx + 1) % mask; // Linear probing
-  //    return (candidate_idx + num_attempts * num_attempts) % mask; //
-  //    Quadratic
-  //  return (candidate_idx + 3) % mask; // Linear probing
+  
+
+  // return (candidate_idx + 1) % mask; // Linear probing
+  // return (candidate_idx + num_attempts * num_attempts) % mask; // Quadratic
+  // return (candidate_idx + 3) % mask; // Linear probing
   return (candidate_idx + rand()) % mask; // Random
 }
 
@@ -166,8 +166,6 @@ s_dense_hash_table_shrink(struct DenseHashTable* dht)
 struct DenseHashTable*
 dense_hash_table_init()
 {
-  collision_count = 0;
-
   struct DenseHashTable* dht = malloc(sizeof(struct DenseHashTable));
   if (dht == NULL) {
     return NULL;
