@@ -30,6 +30,7 @@ struct DenseHashTableEntry
     int hash;
 };
 
+
 struct DenseHashTable
 {
     unsigned int size;
@@ -38,7 +39,9 @@ struct DenseHashTable
     struct DenseHashTableEntry *entries;
 };
 
+
 extern unsigned long long collision_count;
+
 
 Result calculate_hash(const char *key);
 
