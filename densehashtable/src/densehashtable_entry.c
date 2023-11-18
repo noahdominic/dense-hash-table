@@ -73,7 +73,7 @@ dense_hash_table_entry_print(const struct DenseHashTableEntry* entry)
   }
 
   printf(
-    "{key: %s\tvalue: %i\thash: %i}\n", entry->key, entry->value, entry->hash);
+    "\t\"%s\": %i,\n", entry->key, entry->value);
 
   return Ok_empty();
 }

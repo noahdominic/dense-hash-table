@@ -21,6 +21,54 @@ s_probing_func(const unsigned int candidate_idx,
 }
 
 static Result
+dense_hash_table_entry_dev_print(const struct DenseHashTableEntry* entry)
+{
+  if (entry == NULL) {
+    puts("Called from `dense_hash_table_entry_print\n"
+         "Trying to: Verify param `entry`\n");
+    return Err(E_DHT_E_NULL, DhtErrorMessages[E_DHT_E_NULL]);
+  }
+
+  printf(
+    "{key: %s\tvalue: %i\thash: %i}\n", entry->key, entry->value, entry->hash);
+
+  return Ok_empty();
+}
+
+static Result
+dense_hash_table_dev_print(const struct DenseHashTable* dht)
+{
+  if (dht == NULL) {
+    puts("Called from `dense_hash_table_print`\n");
+    return Err(E_DHT_NULL, DhtErrorMessages[E_DHT_NULL]);
+  }
+
+  printf("Size:%u\nCapacity:%u\n", dht->size, dht->capacity);
+
+  printf("The contents of `indices`: ");
+  for (unsigned int i = 0; i < dht->capacity; i++) {
+    if (dht->indices[i] < 0) {
+      printf("NUL...");
+    } else {
+      printf("%u...", dht->indices[i]);
+    }
+  }
+  printf("\n");
+
+  // The code below will fail if `dht->entries` == NULL.
+  // However, we are hoping that nothing goes wrong
+  // because when nothing goes wrong `dht->entries` is only NULL
+  // when dht->size = 0;
+  printf("The contents of `entries`: [\n");
+  for (unsigned int i = 0; i < dht->size; i++) {
+    dense_hash_table_entry_dev_print(&dht->entries[i]);
+  }
+  printf("]\n");
+
+  return Ok_empty();
+}
+
+static Result
 s_dense_hash_table_register_to_indices_arr(const struct DenseHashTable* dht,
                                            const int hash,
                                            const int index_of_entry)
@@ -216,27 +264,15 @@ dense_hash_table_print(const struct DenseHashTable* dht)
     return Err(E_DHT_NULL, DhtErrorMessages[E_DHT_NULL]);
   }
 
-  printf("Size:%u\nCapacity:%u\n", dht->size, dht->capacity);
-
-  printf("The contents of `indices`: ");
-  for (unsigned int i = 0; i < dht->capacity; i++) {
-    if (dht->indices[i] < 0) {
-      printf("NUL...");
-    } else {
-      printf("%u...", dht->indices[i]);
-    }
-  }
-  printf("\n");
-
   // The code below will fail if `dht->entries` == NULL.
   // However, we are hoping that nothing goes wrong
   // because when nothing goes wrong `dht->entries` is only NULL
   // when dht->size = 0;
-  printf("The contents of `entries`: [\n");
+  printf("{\n");
   for (unsigned int i = 0; i < dht->size; i++) {
     dense_hash_table_entry_print(&dht->entries[i]);
   }
-  printf("]\n");
+  printf("}\n");
 
   return Ok_empty();
 }
