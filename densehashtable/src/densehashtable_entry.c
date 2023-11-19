@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 void
 dense_hash_table_entry_cleanup(struct DenseHashTableEntry* entry)
 {
@@ -17,6 +18,7 @@ dense_hash_table_entry_cleanup(struct DenseHashTableEntry* entry)
   entry->value = 0;
   entry->hash = 0;
 }
+
 
 Result
 dense_hash_table_entry_set(struct DenseHashTableEntry* entry,
@@ -63,6 +65,7 @@ dense_hash_table_entry_set(struct DenseHashTableEntry* entry,
   return Ok_empty();
 }
 
+
 Result
 dense_hash_table_entry_print(const struct DenseHashTableEntry* entry)
 {
@@ -72,8 +75,7 @@ dense_hash_table_entry_print(const struct DenseHashTableEntry* entry)
     return Err(E_DHT_E_NULL, DhtErrorMessages[E_DHT_E_NULL]);
   }
 
-  printf(
-    "\t\"%s\": %i,\n", entry->key, entry->value);
+  printf("\t\"%s\": %i,\n", entry->key, entry->value);
 
   return Ok_empty();
 }

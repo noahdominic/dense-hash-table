@@ -12,13 +12,12 @@ s_probing_func(const unsigned int candidate_idx,
                const unsigned int mask,
                const unsigned int num_attempts)
 {
-  
-
   // return (candidate_idx + 1) % mask; // Linear probing
   // return (candidate_idx + num_attempts * num_attempts) % mask; // Quadratic
   // return (candidate_idx + 3) % mask; // Linear probing
   return (candidate_idx + rand()) % mask; // Random
 }
+
 
 static Result
 dense_hash_table_entry_dev_print(const struct DenseHashTableEntry* entry)
@@ -34,6 +33,7 @@ dense_hash_table_entry_dev_print(const struct DenseHashTableEntry* entry)
 
   return Ok_empty();
 }
+
 
 static Result
 dense_hash_table_dev_print(const struct DenseHashTable* dht)
@@ -67,6 +67,7 @@ dense_hash_table_dev_print(const struct DenseHashTable* dht)
 
   return Ok_empty();
 }
+
 
 static Result
 s_dense_hash_table_register_to_indices_arr(const struct DenseHashTable* dht,
@@ -107,6 +108,7 @@ s_dense_hash_table_register_to_indices_arr(const struct DenseHashTable* dht,
   return Ok_empty();
 }
 
+
 static Result
 s_dense_hash_table_refresh_indices(struct DenseHashTable* dht)
 {
@@ -132,6 +134,7 @@ s_dense_hash_table_refresh_indices(struct DenseHashTable* dht)
   }
   return Ok_empty();
 }
+
 
 static Result
 s_dense_hash_table_grow(struct DenseHashTable* dht)
@@ -173,6 +176,7 @@ s_dense_hash_table_grow(struct DenseHashTable* dht)
   return Ok_empty();
 }
 
+
 static Result
 s_dense_hash_table_shrink(struct DenseHashTable* dht)
 {
@@ -211,6 +215,7 @@ s_dense_hash_table_shrink(struct DenseHashTable* dht)
   return Ok_empty();
 }
 
+
 struct DenseHashTable*
 dense_hash_table_init()
 {
@@ -235,6 +240,7 @@ dense_hash_table_init()
   return dht;
 }
 
+
 Result
 dense_hash_table_destroy(struct DenseHashTable* dht)
 {
@@ -256,6 +262,7 @@ dense_hash_table_destroy(struct DenseHashTable* dht)
   return Ok_empty();
 }
 
+
 Result
 dense_hash_table_print(const struct DenseHashTable* dht)
 {
@@ -276,6 +283,7 @@ dense_hash_table_print(const struct DenseHashTable* dht)
 
   return Ok_empty();
 }
+
 
 Result
 dense_hash_table_insert(struct DenseHashTable* dht,
@@ -359,6 +367,7 @@ dense_hash_table_insert(struct DenseHashTable* dht,
 
   return Ok_empty();
 }
+
 
 ResultOption
 dense_hash_table_remove(struct DenseHashTable* dht, const char* key)
@@ -454,6 +463,7 @@ dense_hash_table_remove(struct DenseHashTable* dht, const char* key)
 
   return Ok_option(Some(idx_in_indices));
 }
+
 
 ResultOption
 dense_hash_table_lookup(const struct DenseHashTable* dht, const char* key)

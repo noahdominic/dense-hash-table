@@ -2,3 +2,4 @@ BasedOnStyle: Mozilla
 TabWidth: 8
 UseTab: Never
 AlwaysBreakAfterReturnType: TopLevelDefinitions
+MaxEmptyLinesToKeep: 2
