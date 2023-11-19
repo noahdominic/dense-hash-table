@@ -13,15 +13,15 @@
 
 enum DhtErrorCode
 {
-  E_DHT_NULL, // `dht` is NULL
-  E_DHT_E_NULL,
+  E_DHT_NULL,        // A DenseHashTable or its components is NULL
+  E_DHT_E_NULL,      // A DenseHashTableEntry is NULL
   E_FUNC_PARAM_NULL, // A param called `key` is NULL
   E_ALLOC_FAIL,      // Result of `malloc`/`calloc`/`realloc` is NULL.
 };
 
 static const char* DhtErrorMessages[] = {
   "`dht`, `dht->indices`, or `dht->entries` is NULL.\n",
-  "A DHT entry is NULL.\n",
+  "A DenseHashTableEntry is NULL.\n",
   "A non-DHT function parameter is NULL.\n",
   "Result of `malloc`/`calloc`/`realloc` is NULL.\n"
 };
