@@ -54,41 +54,41 @@ main(int argc, char* argv[])
   if (argc > 1) {
     if (strcmp(argv[1], "benchmark") == 0) {
       if (argc != 3) {
-        puts("Error: `benchmark` requires a number input.\n");
-        return -1;
+  puts("Error: `benchmark` requires a number input.\n");
+  return -1;
       }
       const int number_of_items = atoi(argv[2]);
 
       int random_ints[number_of_items];
 
       for (int i = 0; i < number_of_items; i++) {
-        random_ints[i] = rand();
+  random_ints[i] = rand();
       }
 
       char** random_strings = calloc(number_of_items, sizeof(char*));
       for (int i = 0; i < number_of_items; i++) {
-        random_strings[i] = generate_random_string();
+  random_strings[i] = generate_random_string();
       }
 
       struct DenseHashTable* dht = dense_hash_table_init();
       if (dht == NULL) {
-        error_code = -1;
-        goto emergency_exit_benchmark;
+  error_code = -1;
+  goto emergency_exit_benchmark;
       }
 
       for (int i = 0; i < number_of_items; i++) {
-        if (!dense_hash_table_insert(dht, random_strings[i], random_ints[i])
-               .is_ok) {
-          error_code = -1;
-          goto emergency_exit_benchmark;
-        }
+  if (!dense_hash_table_insert(dht, random_strings[i], random_ints[i])
+         .is_ok) {
+    error_code = -1;
+    goto emergency_exit_benchmark;
+  }
       }
 
     emergency_exit_benchmark:
       dense_hash_table_destroy(dht);
 
       for (int i = 0; i < number_of_items; i++) {
-        free(random_strings[i]);
+  free(random_strings[i]);
       }
 
       free(random_strings);
@@ -113,13 +113,21 @@ main(int argc, char* argv[])
 
   for (int i = 0; i < 3; i++) {
     if (!dense_hash_table_insert(subscribers, names[i], subscriber_counts[i])
-           .is_ok) {
+     .is_ok) {
       error_code = -1;
       goto emergency_exit;
     }
   }
 
-  ResultOption valuehandler = dense_hash_table_lookup(subscribers, "jkjgh");
+  const char* lookup_terms[] = {
+    "Misquoting Jesus",  // Is in table
+    "Lorem Ipsum"    // Is NOT in table
+  };
+  
+  for (int i; i < 2; i++) {
+    printf("Looking for %s... ", lookup_terms[i]);
+  
+  const ResultOption valuehandler = dense_hash_table_lookup(subscribers, lookup_terms[i]);
 
   if (!valuehandler.is_ok) {
     error_code = -1;
@@ -127,11 +135,12 @@ main(int argc, char* argv[])
   }
 
   if (!valuehandler.value.is_some) {
-    printf("Fire is not in dht!\n");
+    printf("%s is not in dht!\n", lookup_terms[i]);
   } else {
     const int value = valuehandler.value.value;
 
-    printf("The value of %s is %i.\n", "Fire", value);
+    printf("The value of %s is %i.\n", lookup_terms[i], value);
+  }
   }
 
 
