@@ -483,8 +483,8 @@ dense_hash_table_remove(struct DenseHashTable* dht, const char* key)
 }
 
 
-ResultOption
-dense_hash_table_lookup(const struct DenseHashTable* dht, const char* key)
+static ResultOption
+dense_hash_table_lookup_index(const struct DenseHashTable* dht, const char* key)
 {
   if (dht == NULL) {
     puts("Called from: `dense_hash_table_lookup()`\n"
@@ -546,4 +546,22 @@ dense_hash_table_lookup(const struct DenseHashTable* dht, const char* key)
   // If the loop completes without finding the key, return an option indicating
   // not found.
   return Ok_option(None());
+}
+
+ResultOption
+dense_hash_table_lookup(const struct DenseHashTable* dht, const char* key)
+{
+  const ResultOption candidate_idx = dense_hash_table_lookup_index(dht, key);
+  if (candidate_idx.is_ok) {
+    if (candidate_idx.value.is_some) {
+      return Ok_option(
+        Some(dht->entries[dht->indices[candidate_idx.value.value]].value));
+    } else {
+      return candidate_idx; // No error.  None.
+    }
+
+    puts("Called from: `dense_hash_table_lookup_idx()`\n"
+         "Trying to: call `dense_hash_table_lookup_index().\n");
+    return candidate_idx; // Error.
+  }
 }
