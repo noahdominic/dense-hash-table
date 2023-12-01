@@ -16,6 +16,7 @@
  */
 
 #include "densehashtable.h"
+#include <stdio.h>
 
 int
 main()
@@ -42,6 +43,22 @@ main()
       goto emergency_exit;
     }
   }
+
+  ResultOption valuehandler = dense_hash_table_lookup(subscribers, "jkjgh");
+
+  if (!valuehandler.is_ok) {
+    error_code = -1;
+    goto emergency_exit;
+  }
+
+  if (!valuehandler.value.is_some) {
+    printf("Fire is not in dht!\n");
+  } else {
+    const int value = valuehandler.value.value;
+
+    printf("The value of %s is %i.\n", "Fire", value);
+  }
+
 
   dense_hash_table_print(subscribers);
 
